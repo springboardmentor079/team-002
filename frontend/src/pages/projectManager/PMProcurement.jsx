@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { ShoppingCart } from "lucide-react";
 import API from "../../services/api";
 import { canEdit } from "../../utils/auth";
-
+import VendorList from "../../components/projectManager/VendorList";
+import PurchaseOrderList from "../../components/projectManager/PurchaseOrderList";
+   import InvoiceList from "../../components/projectManager/InvoiceList";
 function PMProcurement() {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -45,55 +47,64 @@ function PMProcurement() {
         <div className="card-header">
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <ShoppingCart size={18} color="#d97706" />
-            <h3>Requisitions Queue</h3>
+            <h3 style={{ margin: 0, fontSize: "16px", fontWeight: 700, color: "#1e293b" }}>Requisitions Queue</h3>
           </div>
-          <span style={{ fontSize: "11px", color: "#64748b" }}>Live Requisitions</span>
+          <span style={{ fontSize: "11px", color: "#64748b", background: "#f8fafc", padding: "3px 8px", borderRadius: "6px", border: "1px solid #e2e8f0" }}>Live Requisitions</span>
         </div>
 
         {loading ? (
-          <div style={{ padding: "30px", textAlign: "center" }}>Loading requisitions...</div>
+          <div style={{ padding: "36px", textAlign: "center", color: "#64748b" }}>Loading requisitions...</div>
         ) : (
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "12px", textAlign: "left" }}>
               <thead>
                 <tr style={{ borderBottom: "1px solid #e2e8f0", color: "#64748b" }}>
-                  <th style={{ padding: "10px" }}>REQ ID</th>
-                  <th style={{ padding: "10px" }}>Material Name</th>
-                  <th style={{ padding: "10px" }}>Quantity</th>
-                  <th style={{ padding: "10px" }}>Site Location</th>
-                  <th style={{ padding: "10px" }}>Status</th>
-                  {isAuthorized && <th style={{ padding: "10px" }}>Action</th>}
+                  <th style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>REQ ID</th>
+                  <th style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>Material Name</th>
+                  <th style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>Quantity</th>
+                  <th style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>Site Location</th>
+                  <th style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>Status</th>
+                  {isAuthorized && <th style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>Action</th>}
                 </tr>
               </thead>
               <tbody>
                 {requests.length === 0 ? (
                   <tr>
-                    <td colSpan={isAuthorized ? 6 : 5} style={{ padding: "30px", textAlign: "center", color: "#64748b" }}>
+                    <td colSpan={isAuthorized ? 6 : 5} style={{ padding: "36px", textAlign: "center", color: "#64748b" }}>
                       No requisitions available.
                     </td>
                   </tr>
                 ) : (
                 requests.map((req) => (
                   <tr key={req._id} style={{ borderBottom: "1px solid #f1f5f9" }}>
-                    <td style={{ padding: "12px 10px", fontWeight: 700, color: "#d97706" }}>{req.reqId}</td>
-                    <td style={{ padding: "12px 10px", fontWeight: 600, color: "#1e293b" }}>{req.material}</td>
-                    <td style={{ padding: "12px 10px", color: "#1e293b" }}>{req.quantity}</td>
-                    <td style={{ padding: "12px 10px", color: "#64748b" }}>{req.site}</td>
-                    <td style={{ padding: "12px 10px" }}>
+                    <td style={{ padding: "10px 12px", fontWeight: 700, color: "#d97706", whiteSpace: "nowrap" }}>{req.reqId}</td>
+                    <td style={{ padding: "10px 12px", fontWeight: 600, color: "#1e293b" }}>{req.material}</td>
+                    <td style={{ padding: "10px 12px", color: "#1e293b", whiteSpace: "nowrap" }}>{req.quantity}</td>
+                    <td style={{ padding: "10px 12px", color: "#64748b", whiteSpace: "nowrap" }}>{req.site}</td>
+                    <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
                       <span className={`status-pill ${req.badge || "warning"}`}>{req.status}</span>
                     </td>
                     {isAuthorized && (
-                      <td style={{ padding: "12px 10px" }}>
+                      <td style={{ padding: "10px 12px", whiteSpace: "nowrap" }}>
                         {req.status === "Pending Approval" ? (
                           <button
-                            className="pm-menu-item active"
-                            style={{ width: "auto", height: "26px", padding: "0 10px", fontSize: "11px" }}
+                            style={{
+                              background: "#d97706",
+                              color: "#ffffff",
+                              border: "none",
+                              borderRadius: "6px",
+                              padding: "5px 12px",
+                              fontSize: "11px",
+                              fontWeight: 600,
+                              cursor: "pointer",
+                              whiteSpace: "nowrap"
+                            }}
                             onClick={() => handleStatusUpdate(req._id, "Approved")}
                           >
                             Approve
                           </button>
                         ) : (
-                          <span style={{ fontSize: "11px", color: "#64748b" }}>Processed</span>
+                          <span style={{ fontSize: "11px", color: "#94a3b8" }}>Processed</span>
                         )}
                       </td>
                     )}
@@ -104,6 +115,18 @@ function PMProcurement() {
             </table>
           </div>
         )}
+      </div>
+
+      <div className="dashboard-card" style={{ marginTop: "20px" }}>
+        <VendorList />
+      </div>
+
+      <div className="dashboard-card" style={{ marginTop: "20px" }}>
+        <PurchaseOrderList />
+      </div>
+
+      <div className="dashboard-card" style={{ marginTop: "20px" }}>
+        <InvoiceList />
       </div>
     </>
   );

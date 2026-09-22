@@ -10,6 +10,7 @@ import {
   ChartNoAxesCombined,
   Bell,
   Settings,
+  Files,
 } from "lucide-react";
 
 import { useEffect } from "react";
@@ -59,6 +60,11 @@ const menuItems = [
         name: "Procurement",
         icon: ShoppingCart,
         path: "/admin/procurement",
+      },
+      {
+        name: "Documents",
+        icon: Files,
+        path: "/admin/documents",
       },
     ],
   },

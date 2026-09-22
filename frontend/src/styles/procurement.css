@@ -1,0 +1,118 @@
+/* ========================================================
+   PROCUREMENT & VENDOR MANAGEMENT STYLES
+   BuildTrack Platform
+======================================================== */
+
+.proc-section {
+  width: 100%;
+}
+
+.proc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.proc-header h2,
+.proc-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.proc-badge {
+  font-size: 11px;
+  color: #64748b;
+  background: #f8fafc;
+  padding: 3px 8px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  font-weight: 600;
+}
+
+.proc-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.proc-form input,
+.proc-form select {
+  padding: 8px 12px;
+  font-size: 13px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #1e293b;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.proc-form input:focus,
+.proc-form select:focus {
+  border-color: #d97706;
+  box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.12);
+}
+
+.proc-form select option {
+  color: #1e293b;
+  background: #ffffff;
+}
+
+.proc-btn-primary {
+  background: #d97706;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s ease;
+}
+
+.proc-btn-primary:hover {
+  background: #b45309;
+}
+
+.proc-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.proc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+  text-align: left;
+}
+
+.proc-table th {
+  padding: 10px 12px;
+  color: #64748b;
+  border-bottom: 1px solid #e2e8f0;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.proc-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f1f5f9;
+  color: #334155;
+}
+
+.proc-status-select {
+  padding: 4px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid #cbd5e1;
+  cursor: pointer;
+  outline: none;
+  background: #f8fafc;
+}

@@ -27,6 +27,7 @@ import AdminReports from "./pages/admin/AdminReports";
 import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminSettings from "./pages/admin/AdminSettings";
+import AdminDocuments from "./pages/admin/AdminDocuments";
 
 // Project Manager Pages
 import ProjectManagerDashboard from "./pages/projectManager/ProjectManagerDashboard";
@@ -106,6 +107,7 @@ function App() {
           <Route path="reports" element={<AdminReports />} />
           <Route path="analytics" element={<AdminAnalytics />} />
           <Route path="notifications" element={<AdminNotifications />} />
+          <Route path="documents" element={<AdminDocuments />} />
           <Route path="settings" element={<AdminSettings />} />
         </Route>
 

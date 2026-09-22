@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
-import { FileBarChart, Plus, Download, FileText, CheckCircle2, AlertCircle } from "lucide-react";
+import { FileBarChart, Plus, Download, FileText, CheckCircle2, AlertCircle, FilePlus } from "lucide-react";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
 import API from "../../services/api";
 import { canEdit } from "../../utils/auth";
 import StatCard from "../../components/dashboard/StatCard";
@@ -59,7 +61,52 @@ function AdminReports() {
     link.setAttribute("download", "BuildTrack_Reports_Summary.csv");
     document.body.appendChild(link);
     link.click();
+    link.click();
     document.body.removeChild(link);
+  };
+
+  const handleExportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("BuildTrack Reports Summary", 14, 15);
+    const tableData = reports.map((r) => [r.title, r.type, r.author, r.date || new Date(r.createdAt).toLocaleDateString(), r.location, r.status]);
+    doc.autoTable({
+      head: [["Title", "Type", "Author", "Date", "Location", "Status"]],
+      body: tableData,
+      startY: 20,
+    });
+    doc.save("BuildTrack_Reports_Summary.pdf");
+  };
+
+  const generateAutoBudgetReport = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get("/projects");
+      const projects = res.data.data || [];
+      let totalBudget = 0;
+      let totalSpent = 0;
+      projects.forEach(p => {
+        totalBudget += Number(p.budget || 0);
+        totalSpent += Number(p.spent || 0);
+      });
+
+      const summaryText = `System Auto-Generated Budget Report. Total Projects: ${projects.length}. Total Budget: ₹${totalBudget.toLocaleString("en-IN")}. Total Spent: ₹${totalSpent.toLocaleString("en-IN")}. Remaining: ₹${(totalBudget - totalSpent).toLocaleString("en-IN")}.`;
+
+      const reportData = {
+        title: "Auto Budget Summary",
+        type: "Quality",
+        location: "System-wide",
+        summary: summaryText,
+        snagsFound: 0,
+        status: "Approved"
+      };
+
+      await API.post("/reports", reportData);
+      fetchReports();
+    } catch (err) {
+      alert("Failed to generate auto report");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const filtered = reports.filter((r) => filterType === "All" || r.type === filterType);
@@ -75,10 +122,34 @@ function AdminReports() {
           <button
             className="date-button"
             style={{ display: "flex", alignItems: "center", gap: "6px" }}
+            onClick={handleExportPDF}
+          >
+            <FileText size={15} /> Export PDF
+          </button>
+          <button
+            className="date-button"
+            style={{ display: "flex", alignItems: "center", gap: "6px" }}
             onClick={handleExport}
           >
             <Download size={15} /> Export CSV
           </button>
+          {isAuthorized && (
+            <button
+              className="date-button"
+              style={{
+                background: "#0f766e",
+                color: "#ffffff",
+                border: "none",
+                fontWeight: 600,
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+              }}
+              onClick={generateAutoBudgetReport}
+            >
+              <FilePlus size={16} /> Auto Budget Report
+            </button>
+          )}
           {isAuthorized && (
             <button
               className="date-button"
