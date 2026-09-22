@@ -23,8 +23,21 @@ function ContractorAttendance() {
     attendance.length > 0
       ? Math.round((presentCount / attendance.length) * 100)
       : 0;
-  const masonsCount = attendance.filter((a) => a.trade === "Masons & Structural").length;
-  const electriciansCount = attendance.filter((a) => a.trade === "Electricians & MEP").length;
+  const tradeMap = {};
+  const colorPalette = ["#3b82f6", "#f59e0b", "#10b981", "#8b5cf6", "#ec4899", "#06b6d4", "#64748b"];
+  attendance.forEach((a) => {
+    const trade = (a.trade && a.trade.trim()) ? a.trade.trim() : "General Site Labor";
+    tradeMap[trade] = (tradeMap[trade] || 0) + 1;
+  });
+  let pIdx = 0;
+  const workforceDistribution = Object.keys(tradeMap).map((trade) => ({
+    name: trade,
+    value: tradeMap[trade],
+    color: colorPalette[pIdx++ % colorPalette.length],
+  }));
+
+  const masonsCount = attendance.filter((a) => (a.trade || "").includes("Mason") || (a.trade || "").includes("Structural")).length;
+  const electriciansCount = attendance.filter((a) => (a.trade || "").includes("Electric") || (a.trade || "").includes("MEP")).length;
 
   const fetchAttendance = async () => {
     try {
@@ -59,8 +72,8 @@ function ContractorAttendance() {
     <>
       <div className="welcome-section">
         <div>
-          <h1>Crew Daily Attendance 👥</h1>
-          <p>Mark crew presence, log trade rosters, and verify biometric punch logs.</p>
+          <h1>Contractor Crew Attendance & Labor Logs 👷</h1>
+          <p>Real-time workforce headcount, trade assignments, shifts, and biometric punch telemetry.</p>
         </div>
         {isAuthorized && (
           <button
@@ -82,15 +95,15 @@ function ContractorAttendance() {
       </div>
 
       <div className="stats-grid">
-        <StatCard title="TOTAL CREW TODAY" value={String(presentCount)} change="Present" type="users" />
-        <StatCard title="ATTENDANCE RATE" value={`${attendanceRate}%`} change="Live" type="active" />
-        <StatCard title="MASONS & STRUCTURAL" value={`${masonsCount} Active`} change="Live" type="projects" />
-        <StatCard title="ELECTRICIANS" value={`${electriciansCount} Active`} change="Live" type="pending" />
-        <StatCard title="SAFETY CLEARED" value="0%" change="No data" type="alerts" />
+        <StatCard title="TOTAL CREW TODAY" value={String(presentCount)} change="Present on site" type="users" />
+        <StatCard title="ATTENDANCE RATE" value={`${attendanceRate}%`} change="Live check-in" type="active" />
+        <StatCard title="MASONS & STRUCTURAL" value={`${masonsCount} Active`} change="On site" type="projects" />
+        <StatCard title="ELECTRICIANS & MEP" value={`${electriciansCount} Active`} change="On site" type="pending" />
+        <StatCard title="TOTAL LOGGED" value={String(attendance.length)} change="All records" type="alerts" />
       </div>
 
       <div className="dashboard-grid role-grid">
-        <WorkforceTradeAllocation />
+        <WorkforceTradeAllocation data={workforceDistribution} />
 
         <div className="dashboard-card">
           <div className="card-header">
