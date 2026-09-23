@@ -63,6 +63,9 @@ const updateEquipment = async (req, res) => {
     }
     if (operator) updateData.operator = operator;
     if (location) updateData.location = location;
+    if (req.body.nextMaintenanceDate) updateData.nextMaintenanceDate = req.body.nextMaintenanceDate;
+    if (req.body.maintenanceNotes) updateData.maintenanceNotes = req.body.maintenanceNotes;
+    if (req.body.lastInspection) updateData.lastInspection = req.body.lastInspection;
 
     const eq = await Equipment.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!eq) {
@@ -72,6 +75,41 @@ const updateEquipment = async (req, res) => {
     res.status(200).json({
       success: true,
       message: "Equipment updated successfully",
+      data: eq,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+// POST /api/equipment/:id/maintenance
+const scheduleMaintenance = async (req, res) => {
+  try {
+    const { nextMaintenanceDate, maintenanceNotes, servicedBy, cost } = req.body;
+    const eq = await Equipment.findById(req.params.id);
+    if (!eq) {
+      return res.status(404).json({ success: false, message: "Equipment not found" });
+    }
+
+    if (nextMaintenanceDate) eq.nextMaintenanceDate = nextMaintenanceDate;
+    if (maintenanceNotes) eq.maintenanceNotes = maintenanceNotes;
+    eq.status = "Maintenance";
+    eq.badge = "status-maintenance";
+
+    if (servicedBy || cost || maintenanceNotes) {
+      eq.maintenanceHistory.unshift({
+        serviceDate: new Date().toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" }),
+        servicedBy: servicedBy || "Site Maintenance Team",
+        notes: maintenanceNotes || "Routine servicing & inspection",
+        cost: cost || "₹ 15,000",
+      });
+    }
+
+    await eq.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Maintenance scheduled and logged successfully",
       data: eq,
     });
   } catch (error) {
@@ -99,5 +137,6 @@ module.exports = {
   getEquipment,
   createEquipment,
   updateEquipment,
+  scheduleMaintenance,
   deleteEquipment,
 };

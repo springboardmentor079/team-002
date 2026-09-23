@@ -27,6 +27,7 @@ const shiftRoutes = require("./routes/shiftRoutes");
 const delayRoutes = require("./routes/delayRoutes");
 const purchaseOrderRoutes = require("./routes/purchaseOrderRoutes");
 const invoiceRoutes = require("./routes/invoiceRoutes");
+const payrollRoutes = require("./routes/payrollRoutes");
 const seedInitialData = require("./config/seedData");
 
 const app = express();
@@ -81,6 +82,7 @@ app.use("/api/invoices", invoiceRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/shifts", shiftRoutes);
 app.use("/api/delays", delayRoutes);
+app.use("/api/payroll", payrollRoutes);
 
 const PORT = process.env.PORT || 5001;
 

@@ -1,4 +1,5 @@
 const Milestone = require("../models/Milestone");
+const Notification = require("../models/Notification");
 
 // GET /api/milestones
 const getMilestones = async (req, res) => {
@@ -34,6 +35,17 @@ const createMilestone = async (req, res) => {
       verifiedBy: req.user.name || "Site Engineer",
     });
 
+    try {
+      await Notification.create({
+        title: "New Project Milestone",
+        message: `Milestone '${milestone.phase}' scheduled for ${milestone.project} (Target: ${milestone.date}).`,
+        role: "all",
+        type: "info",
+      });
+    } catch (notifErr) {
+      console.error("Milestone notification error:", notifErr);
+    }
+
     res.status(201).json({
       success: true,
       message: "Milestone added successfully",
@@ -61,6 +73,19 @@ const updateMilestone = async (req, res) => {
     const milestone = await Milestone.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!milestone) {
       return res.status(404).json({ success: false, message: "Milestone not found" });
+    }
+
+    if (clientApproved) {
+      try {
+        await Notification.create({
+          title: "Milestone Client Approved",
+          message: `Client approved milestone '${milestone.phase}' for ${milestone.project}.`,
+          role: "all",
+          type: "success",
+        });
+      } catch (notifErr) {
+        console.error("Milestone approval notification error:", notifErr);
+      }
     }
 
     res.status(200).json({

@@ -13,6 +13,56 @@ function Login() {
 
   const navigate = useNavigate();
 
+  // ================= QUICK DEMO LOGIN FUNCTION =================
+  const handleQuickLogin = async (demoEmail, demoPassword) => {
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    setError("");
+    setIsLoading(true);
+
+    try {
+      const response = await API.post("/auth/login", {
+        email: demoEmail,
+        password: demoPassword,
+      });
+
+      const data = response.data;
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      sessionStorage.removeItem("token");
+      sessionStorage.removeItem("user");
+
+      const role = data.user.role;
+      switch (role) {
+        case "admin":
+          navigate("/admin/dashboard", { replace: true });
+          break;
+        case "project_manager":
+          navigate("/project-manager/dashboard", { replace: true });
+          break;
+        case "site_engineer":
+          navigate("/site-engineer/dashboard", { replace: true });
+          break;
+        case "contractor":
+          navigate("/contractor/dashboard", { replace: true });
+          break;
+        case "worker":
+          navigate("/worker/dashboard", { replace: true });
+          break;
+        case "client":
+          navigate("/client/dashboard", { replace: true });
+          break;
+        default:
+          navigate("/admin/dashboard", { replace: true });
+      }
+    } catch (err) {
+      console.error("Quick Login Error:", err);
+      setError(err.response?.data?.message || "Quick login failed.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // ================= LOGIN FUNCTION =================
 
   const handleLogin = async (e) => {
@@ -242,14 +292,87 @@ function Login() {
           </div>
 
 
-          {/* ================= ERROR MESSAGE ================= */}
-
-          {error && (
-            <div className="login-error">
-              {error}
+          {/* ================= QUICK DEMO LOGINS ================= */}
+          <div
+            style={{
+              marginBottom: "20px",
+              padding: "14px",
+              background: "#f8fafc",
+              border: "1px solid #e2e8f0",
+              borderRadius: "10px",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "12px",
+                fontWeight: 700,
+                color: "#1e293b",
+                display: "block",
+                marginBottom: "8px",
+              }}
+            >
+              ⚡ 1-Click Demo Login (Instant Role Access):
+            </span>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: "6px",
+              }}
+            >
+              <button
+                type="button"
+                className="date-button"
+                style={{ padding: "6px 8px", fontSize: "11px", justifyContent: "center" }}
+                onClick={() => handleQuickLogin("admin@buildtrack.com", "password123")}
+              >
+                👑 Admin
+              </button>
+              <button
+                type="button"
+                className="date-button"
+                style={{ padding: "6px 8px", fontSize: "11px", justifyContent: "center" }}
+                onClick={() => handleQuickLogin("pm@buildtrack.com", "password123")}
+              >
+                📋 PM
+              </button>
+              <button
+                type="button"
+                className="date-button"
+                style={{ padding: "6px 8px", fontSize: "11px", justifyContent: "center" }}
+                onClick={() => handleQuickLogin("engineer@buildtrack.com", "password123")}
+              >
+                📐 Engineer
+              </button>
+              <button
+                type="button"
+                className="date-button"
+                style={{ padding: "6px 8px", fontSize: "11px", justifyContent: "center" }}
+                onClick={() => handleQuickLogin("contractor@buildtrack.com", "password123")}
+              >
+                🏗️ Contractor
+              </button>
+              <button
+                type="button"
+                className="date-button"
+                style={{ padding: "6px 8px", fontSize: "11px", justifyContent: "center" }}
+                onClick={() => handleQuickLogin("worker@buildtrack.com", "password123")}
+              >
+                🔨 Worker
+              </button>
+              <button
+                type="button"
+                className="date-button"
+                style={{ padding: "6px 8px", fontSize: "11px", justifyContent: "center" }}
+                onClick={() => handleQuickLogin("client@buildtrack.com", "password123")}
+              >
+                👤 Client
+              </button>
             </div>
-          )}
-
+            <span style={{ fontSize: "10px", color: "#64748b", marginTop: "6px", display: "block" }}>
+              Password for all test accounts: <code>password123</code>
+            </span>
+          </div>
 
           {/* ================= LOGIN FORM ================= */}
 

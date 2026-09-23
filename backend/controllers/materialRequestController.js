@@ -1,4 +1,6 @@
 const MaterialRequest = require("../models/MaterialRequest");
+const Inventory = require("../models/Inventory");
+const Notification = require("../models/Notification");
 
 // GET /api/materials
 const getMaterialRequests = async (req, res) => {
@@ -40,6 +42,17 @@ const createMaterialRequest = async (req, res) => {
       notes: notes || "",
     });
 
+    try {
+      await Notification.create({
+        title: "New Material Requisition",
+        message: `${newReq.requestedBy} requested ${newReq.quantity} of ${newReq.material} for ${newReq.site}.`,
+        role: "project_manager",
+        type: "info",
+      });
+    } catch (notifErr) {
+      console.error("Material notification error:", notifErr);
+    }
+
     res.status(201).json({
       success: true,
       message: "Material request submitted successfully",
@@ -66,6 +79,36 @@ const updateMaterialRequestStatus = async (req, res) => {
     );
     if (!updated) {
       return res.status(404).json({ success: false, message: "Request not found" });
+    }
+
+    if (status === "Approved") {
+      try {
+        const invItem = await Inventory.findOne({
+          name: { $regex: new RegExp(updated.material, "i") },
+        });
+        if (invItem) {
+          const reqQty = parseInt(updated.quantity) || 0;
+          if (reqQty > 0) {
+            invItem.quantity = Math.max(0, invItem.quantity - reqQty);
+            invItem.status =
+              invItem.quantity <= 0
+                ? "Out of Stock"
+                : invItem.quantity < invItem.minQuantity
+                ? "Low Stock"
+                : "In Stock";
+            await invItem.save();
+          }
+        }
+
+        await Notification.create({
+          title: "Material Request Approved",
+          message: `Requisition for ${updated.material} (${updated.quantity}) has been approved for dispatch.`,
+          role: "contractor",
+          type: "success",
+        });
+      } catch (err) {
+        console.error("Inventory deduction / approval notification error:", err);
+      }
     }
 
     res.status(200).json({

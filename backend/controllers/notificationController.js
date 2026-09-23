@@ -88,9 +88,35 @@ const markAllAsRead = async (req, res) => {
   }
 };
 
+// POST /api/notifications
+const createNotification = async (req, res) => {
+  try {
+    const { title, message, role, type } = req.body;
+    if (!title || !message) {
+      return res.status(400).json({ success: false, message: "Title and message are required" });
+    }
+    const notif = await Notification.create({
+      title,
+      message,
+      role: role || "all",
+      type: type || "info",
+      time: "Just now",
+      read: false,
+    });
+    res.status(201).json({
+      success: true,
+      message: "Notification created successfully",
+      data: notif,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 module.exports = {
   getNotifications,
   getUnreadCount,
   markAsRead,
   markAllAsRead,
+  createNotification,
 };

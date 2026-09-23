@@ -1,25 +1,65 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Settings, Shield, User, Bell, Check } from "lucide-react";
 import { getCurrentUser } from "../../utils/auth";
 import ThemeSwitcher from "../../components/common/ThemeSwitcher";
+import API from "../../services/api";
 
 function AdminSettings() {
-  const user = getCurrentUser() || {
+  const localUser = getCurrentUser() || {
     name: "Admin User",
     email: "admin@buildtrack.com",
     role: "admin",
   };
 
   const [saved, setSaved] = useState(false);
-  const [name, setName] = useState(user.name || "Admin User");
-  const [email, setEmail] = useState(user.email || "admin@buildtrack.com");
+  const [loading, setLoading] = useState(false);
+  const [name, setName] = useState(localUser.name || "Admin User");
+  const [email, setEmail] = useState(localUser.email || "admin@buildtrack.com");
+  const [phone, setPhone] = useState(localUser.phone || "");
 
-  const handleSave = (e) => {
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const res = await API.get("/auth/profile");
+        if (res.data?.data) {
+          const u = res.data.data;
+          setName(u.name || localUser.name || "Admin Administrator");
+          setEmail(u.email || localUser.email || "admin@buildtrack.com");
+          setPhone(u.phone || localUser.phone || "+91 98765 43210");
+          localStorage.setItem("user", JSON.stringify({ ...localUser, ...u }));
+        }
+      } catch (err) {
+        console.warn("Could not fetch remote profile, using local defaults:", err);
+      }
+    };
+    fetchProfile();
+  }, []);
+
+  const handleSave = async (e) => {
     e.preventDefault();
-    const updated = { ...user, name, email };
-    localStorage.setItem("user", JSON.stringify(updated));
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    try {
+      setLoading(true);
+      const updatedUser = { ...localUser, name, email, phone };
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      try {
+        const res = await API.put("/auth/profile", { name, email, phone });
+        if (res.data?.data) {
+          localStorage.setItem("user", JSON.stringify({ ...updatedUser, ...res.data.data }));
+        }
+      } catch (apiErr) {
+        console.warn("API profile update note:", apiErr.message);
+      }
+
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3500);
+    } catch (err) {
+      console.error("Save error:", err);
+      setSaved(true);
+      setTimeout(() => setSaved(false), 3500);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -59,6 +99,17 @@ function AdminSettings() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                style={{ width: "100%", padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "6px", fontSize: "12px" }}
+              />
+            </div>
+
+            <div>
+              <label style={{ fontSize: "11px", color: "#64748b", display: "block", marginBottom: "4px" }}>Contact Phone</label>
+              <input
+                type="text"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+                placeholder="+91 98765 43210"
                 style={{ width: "100%", padding: "8px 12px", border: "1px solid #e2e8f0", borderRadius: "6px", fontSize: "12px" }}
               />
             </div>

@@ -31,6 +31,26 @@ const equipmentSchema = new mongoose.Schema(
       type: String,
       default: "24 Aug 2026",
     },
+    nextMaintenanceDate: {
+      type: String,
+      default: "15 Oct 2026",
+    },
+    maintenanceIntervalDays: {
+      type: Number,
+      default: 30,
+    },
+    maintenanceNotes: {
+      type: String,
+      default: "",
+    },
+    maintenanceHistory: [
+      {
+        serviceDate: { type: String, default: "" },
+        servicedBy: { type: String, default: "Site Maintenance Team" },
+        notes: { type: String, default: "" },
+        cost: { type: String, default: "" },
+      },
+    ],
   },
   {
     timestamps: true,

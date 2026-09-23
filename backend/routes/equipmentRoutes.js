@@ -4,6 +4,7 @@ const {
   getEquipment,
   createEquipment,
   updateEquipment,
+  scheduleMaintenance,
   deleteEquipment,
 } = require("../controllers/equipmentController");
 const { protect, authorize } = require("../middleware/authMiddleware");
@@ -14,6 +15,8 @@ router
   .route("/")
   .get(getEquipment)
   .post(authorize("admin", "project_manager", "site_engineer"), createEquipment);
+
+router.post("/:id/maintenance", authorize("admin", "project_manager", "site_engineer", "contractor"), scheduleMaintenance);
 
 router
   .route("/:id")

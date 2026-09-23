@@ -1,4 +1,5 @@
 const Inventory = require("../models/Inventory");
+const Notification = require("../models/Notification");
 
 // GET /api/inventory
 const getInventory = async (req, res) => {
@@ -61,6 +62,19 @@ const updateInventoryItem = async (req, res) => {
     const item = await Inventory.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!item) {
       return res.status(404).json({ success: false, message: "Item not found" });
+    }
+
+    if (item.status === "Low Stock" || item.status === "Out of Stock") {
+      try {
+        await Notification.create({
+          title: `Inventory Alert: ${item.status}`,
+          message: `${item.name} is running critically low (${item.quantity} ${item.unit} remaining). Reorder recommended.`,
+          role: "project_manager",
+          type: "warning",
+        });
+      } catch (notifErr) {
+        console.error("Inventory alert notification failed:", notifErr);
+      }
     }
 
     res.status(200).json({

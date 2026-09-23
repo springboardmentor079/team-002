@@ -1,3 +1,5 @@
+const User = require("../models/User");
+const bcrypt = require("bcryptjs");
 const Project = require("../models/Project");
 const MaterialRequest = require("../models/MaterialRequest");
 const WorkOrder = require("../models/WorkOrder");
@@ -7,9 +9,25 @@ const Attendance = require("../models/Attendance");
 const Inventory = require("../models/Inventory");
 const Report = require("../models/Report");
 const Notification = require("../models/Notification");
+const Payroll = require("../models/Payroll");
 
 const seedInitialData = async () => {
   try {
+    // 0. Default Users for all 6 roles
+    const adminExists = await User.findOne({ email: "admin@buildtrack.com" });
+    if (!adminExists) {
+      const defaultPassword = await bcrypt.hash("password123", 12);
+      const demoUsers = [
+        { email: "admin@buildtrack.com", name: "Admin Administrator", role: "admin", password: defaultPassword },
+        { email: "pm@buildtrack.com", name: "Project Manager", role: "project_manager", password: defaultPassword },
+        { email: "engineer@buildtrack.com", name: "Site Engineer", role: "site_engineer", password: defaultPassword },
+        { email: "contractor@buildtrack.com", name: "Master Contractor", role: "contractor", password: defaultPassword },
+        { email: "worker@buildtrack.com", name: "Ramesh Kumar (Worker)", role: "worker", password: defaultPassword },
+        { email: "client@buildtrack.com", name: "Skyline Client", role: "client", password: defaultPassword },
+      ];
+      await User.insertMany(demoUsers);
+    }
+
     // 1. Projects
     const projectCount = await Project.countDocuments();
     if (projectCount === 0) {
@@ -471,6 +489,70 @@ const seedInitialData = async () => {
           type: "info",
           time: "3 hours ago",
           read: true,
+        },
+      ]);
+    }
+
+    // 10. Payroll Records
+    const payrollCount = await Payroll.countDocuments();
+    if (payrollCount === 0) {
+      await Payroll.insertMany([
+        {
+          workerName: "Ramesh Kumar (Worker)",
+          trade: "Masons & Structural",
+          slipId: "PAY-2026-881",
+          period: "01 Sep – 15 Sep 2026",
+          regularHours: 80,
+          otHours: 12,
+          hourlyRate: 350,
+          rateLabel: "₹350/hr",
+          grossPay: 34300,
+          grossLabel: "₹ 34,300",
+          deductions: 2100,
+          deductionsLabel: "₹ 2,100",
+          netPay: 32200,
+          netLabel: "₹ 32,200",
+          payDate: "16 Sep 2026",
+          status: "Disbursed",
+          account: "HDFC Bank •••• 4912",
+        },
+        {
+          workerName: "Ramesh Kumar (Worker)",
+          trade: "Masons & Structural",
+          slipId: "PAY-2026-742",
+          period: "16 Aug – 31 Aug 2026",
+          regularHours: 88,
+          otHours: 16,
+          hourlyRate: 350,
+          rateLabel: "₹350/hr",
+          grossPay: 39200,
+          grossLabel: "₹ 39,200",
+          deductions: 2400,
+          deductionsLabel: "₹ 2,400",
+          netPay: 36800,
+          netLabel: "₹ 36,800",
+          payDate: "01 Sep 2026",
+          status: "Disbursed",
+          account: "HDFC Bank •••• 4912",
+        },
+        {
+          workerName: "Ramesh Kumar (Worker)",
+          trade: "Masons & Structural",
+          slipId: "PAY-2026-619",
+          period: "01 Aug – 15 Aug 2026",
+          regularHours: 80,
+          otHours: 8,
+          hourlyRate: 350,
+          rateLabel: "₹350/hr",
+          grossPay: 32200,
+          grossLabel: "₹ 32,200",
+          deductions: 1950,
+          deductionsLabel: "₹ 1,950",
+          netPay: 30250,
+          netLabel: "₹ 30,250",
+          payDate: "16 Aug 2026",
+          status: "Disbursed",
+          account: "HDFC Bank •••• 4912",
         },
       ]);
     }

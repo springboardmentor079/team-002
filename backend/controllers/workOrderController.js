@@ -1,4 +1,5 @@
 const WorkOrder = require("../models/WorkOrder");
+const Notification = require("../models/Notification");
 
 // GET /api/work-orders
 const getWorkOrders = async (req, res) => {
@@ -32,6 +33,23 @@ const createWorkOrder = async (req, res) => {
       statusClass: status === "On Schedule" ? "good" : status === "Delayed" ? "danger" : "warning",
     });
 
+    try {
+      await Notification.create({
+        title: "New Task Assigned",
+        message: `Work Order '${order.title}' in ${order.zone} assigned to ${order.lead} (Due: ${order.deadline}).`,
+        role: "contractor",
+        type: "info",
+      });
+      await Notification.create({
+        title: "New Duty Assignment",
+        message: `New duty assigned: '${order.title}' for trade ${order.trade} in ${order.zone}.`,
+        role: "worker",
+        type: "info",
+      });
+    } catch (notifErr) {
+      console.error("Task assignment notification failed:", notifErr);
+    }
+
     res.status(201).json({
       success: true,
       message: "Work order created successfully",
@@ -59,6 +77,19 @@ const updateWorkOrder = async (req, res) => {
     const order = await WorkOrder.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!order) {
       return res.status(404).json({ success: false, message: "Work order not found" });
+    }
+
+    if (status === "Delayed") {
+      try {
+        await Notification.create({
+          title: "Task Delayed Alert",
+          message: `Work order '${order.title}' in ${order.zone} has been marked as Delayed.`,
+          role: "project_manager",
+          type: "warning",
+        });
+      } catch (notifErr) {
+        console.error("Delayed task notification failed:", notifErr);
+      }
     }
 
     res.status(200).json({
