@@ -1,4 +1,5 @@
 const PurchaseOrder = require("../models/PurchaseOrder");
+const Notification = require("../models/Notification");
 
 exports.getPurchaseOrders = async (req, res) => {
   try {
@@ -47,6 +48,18 @@ exports.createPurchaseOrder = async (req, res) => {
     });
 
     const populated = await PurchaseOrder.findById(data._id).populate("vendor", "name category phone email");
+
+    try {
+      await Notification.create({
+        title: "New Purchase Order Created",
+        message: `PO ${data.poNumber} has been generated for vendor ${populated.vendor?.name || 'Direct Supplier'}.`,
+        role: "admin",
+        type: "info"
+      });
+    } catch (notifErr) {
+      console.error("Failed to create PO notification:", notifErr);
+    }
+
     res.status(201).json({ success: true, data: populated });
   } catch (e) {
     res.status(400).json({ success: false, message: e.message });

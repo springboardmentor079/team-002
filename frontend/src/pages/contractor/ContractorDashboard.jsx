@@ -77,19 +77,19 @@ function ContractorDashboard() {
         <StatCard
           title="ACTIVE CREW ON-SITE"
           value={stats.totalCrew ?? 0}
-          change={loading ? "Loading" : "Live"}
+          change={loading ? "Loading" : stats.totalCrew > 0 ? "Live on site" : "No crew logged"}
           type="users"
         />
         <StatCard
           title="ATTENDANCE RATE"
           value={`${stats.attendanceRate ?? 0}%`}
-          change={loading ? "Loading" : "Live"}
+          change={loading ? "Loading" : stats.attendanceRate > 0 ? "Present today" : "Awaiting check-in"}
           type="active"
         />
         <StatCard
           title="ACTIVE WORK ORDERS"
           value={stats.activeWork ?? 0}
-          change={`${stats.onSchedule ?? 0} on time`}
+          change={`${stats.onSchedule ?? dashboardData?.workOrderStatus?.onSchedule ?? 0} on time`}
           type="projects"
         />
         <StatCard
@@ -101,7 +101,7 @@ function ContractorDashboard() {
         <StatCard
           title="MACHINERY DEPLOYED"
           value={`${stats.equipmentDeployed ?? 0} Units`}
-          change="Active"
+          change={stats.equipmentTotal ? `${stats.equipmentTotal} total units` : "Active"}
           type="alerts"
         />
       </div>

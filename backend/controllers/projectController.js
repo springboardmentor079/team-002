@@ -1,4 +1,5 @@
 const Project = require("../models/Project");
+const Notification = require("../models/Notification");
 
 const { parseAmountToCrores } = require("../utils/currency");
 
@@ -140,6 +141,7 @@ const createProject = async (req, res) => {
 
 const updateProject = async (req, res) => {
   try {
+    const oldProject = await Project.findById(req.params.id);
     const project = await Project.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -154,6 +156,19 @@ const updateProject = async (req, res) => {
         success: false,
         message: "Project not found",
       });
+    }
+
+    if (oldProject && req.body.status && oldProject.status !== req.body.status) {
+      try {
+        await Notification.create({
+          title: "Project Status Updated",
+          message: `Project ${project.name} is now marked as ${project.status}.`,
+          role: "all",
+          type: req.body.status === "Delayed" || req.body.status === "At Risk" ? "warning" : "info"
+        });
+      } catch (notifErr) {
+        console.error("Failed to create project notification:", notifErr);
+      }
     }
 
     res.status(200).json({

@@ -23,6 +23,20 @@ function ContractorEquipment() {
     fetchEquipment();
   }, []);
 
+  const operationalCount = equipment.filter(
+    (e) => e.status === "Operational" || e.status === "In Use"
+  ).length;
+  const maintenanceCount = equipment.filter(
+    (e) => e.status === "Maintenance"
+  ).length;
+  const scheduledCount = equipment.filter(
+    (e) => e.status === "Scheduled Delivery" || e.status === "Standby"
+  ).length;
+  const uptimePct =
+    equipment.length > 0
+      ? Math.round((operationalCount / equipment.length) * 100)
+      : 0;
+
   return (
     <>
       <div className="welcome-section">
@@ -33,11 +47,36 @@ function ContractorEquipment() {
       </div>
 
       <div className="stats-grid">
-        <StatCard title="DEPLOYED UNITS" value={String(equipment.length)} change="On site" type="projects" />
-        <StatCard title="CRANE UPTIME" value="0%" change="No data" type="active" />
-        <StatCard title="INSPECTIONS PASSED" value="0%" change="No data" type="users" />
-        <StatCard title="MAINTENANCE STATUS" value="0" change="No data" type="alerts" />
-        <StatCard title="SCHEDULED DISPATCH" value="0" change="No data" type="pending" />
+        <StatCard
+          title="DEPLOYED UNITS"
+          value={`${operationalCount} / ${equipment.length}`}
+          change={operationalCount > 0 ? "Active on site" : "Standby"}
+          type="projects"
+        />
+        <StatCard
+          title="FLEET AVAILABILITY"
+          value={`${uptimePct}%`}
+          change="Operational"
+          type="active"
+        />
+        <StatCard
+          title="UNDER MAINTENANCE"
+          value={String(maintenanceCount)}
+          change={maintenanceCount > 0 ? "Requires service" : "Zero snags"}
+          type="alerts"
+        />
+        <StatCard
+          title="SCHEDULED / STANDBY"
+          value={String(scheduledCount)}
+          change="Ready to dispatch"
+          type="pending"
+        />
+        <StatCard
+          title="TOTAL REGISTERED"
+          value={String(equipment.length)}
+          change="Site inventory"
+          type="users"
+        />
       </div>
 
       <div className="dashboard-card equipment-card" style={{ maxWidth: "800px" }}>

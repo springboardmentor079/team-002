@@ -84,16 +84,21 @@ function ContractorMaterialRequests() {
         <StatCard
           title="IN TRANSIT"
           value={String(requests.filter((r) => r.status === "In Transit").length)}
-          change="Live"
+          change="Live dispatch"
           type="alerts"
         />
         <StatCard
-          title="DELIVERED TODAY"
+          title="DELIVERED / APPROVED"
           value={String(requests.filter((r) => r.status === "Delivered" || r.status === "Approved").length)}
-          change="Verified"
+          change="Cleared for site"
           type="active"
         />
-        <StatCard title="SUPPLY ACCURACY" value="0%" change="No data" type="users" />
+        <StatCard
+          title="FULFILLMENT RATE"
+          value={`${requests.length > 0 ? Math.round((requests.filter((r) => r.status === "Delivered" || r.status === "Approved").length / requests.length) * 100) : 0}%`}
+          change="Approved & delivered"
+          type="users"
+        />
       </div>
 
       <div className="dashboard-card material-requests-card" style={{ maxWidth: "800px" }}>
