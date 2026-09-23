@@ -1,5 +1,6 @@
 const Invoice = require("../models/Invoice");
 const PurchaseOrder = require("../models/PurchaseOrder");
+const Notification = require("../models/Notification");
 
 exports.getInvoices = async (req, res) => {
   try {
@@ -44,6 +45,18 @@ exports.createInvoice = async (req, res) => {
       select: "poNumber vendor totalAmount status",
       populate: { path: "vendor", select: "name category phone email" },
     });
+
+    try {
+      await Notification.create({
+        title: "New Invoice Created",
+        message: `Invoice ${data.invoiceNumber} for ₹${Number(data.amount || 0).toLocaleString("en-IN")} has been recorded and is due.`,
+        role: "admin",
+        type: "warning",
+      });
+    } catch (notifErr) {
+      console.error("Failed to create invoice notification:", notifErr);
+    }
+
     res.status(201).json({ success: true, data: populated });
   } catch (e) {
     res.status(400).json({ success: false, message: e.message });
@@ -63,6 +76,18 @@ exports.updateInvoiceStatus = async (req, res) => {
       select: "poNumber vendor totalAmount status",
       populate: { path: "vendor", select: "name category phone email" },
     });
+
+    try {
+      await Notification.create({
+        title: `Invoice ${data.status}`,
+        message: `Invoice ${data.invoiceNumber} has been marked as ${data.status}.`,
+        role: "admin",
+        type: data.status === "Paid" ? "success" : "info",
+      });
+    } catch (notifErr) {
+      console.error("Failed to create invoice status notification:", notifErr);
+    }
+
     res.json({ success: true, data });
   } catch (e) {
     res.status(400).json({ success: false, message: e.message });

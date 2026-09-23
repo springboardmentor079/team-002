@@ -73,6 +73,18 @@ exports.updatePOStatus = async (req, res) => {
       { status: req.body.status },
       { returnDocument: "after", runValidators: true }
     ).populate("vendor", "name category phone email");
+
+    try {
+      await Notification.create({
+        title: "Purchase Order Updated",
+        message: `PO ${data.poNumber} status has been updated to ${data.status}.`,
+        role: "project_manager",
+        type: data.status === "Cancelled" ? "warning" : "success",
+      });
+    } catch (notifErr) {
+      console.error("Failed to create PO status notification:", notifErr);
+    }
+
     res.json({ success: true, data });
   } catch (e) {
     res.status(400).json({ success: false, message: e.message });

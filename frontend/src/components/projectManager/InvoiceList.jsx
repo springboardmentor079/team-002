@@ -33,17 +33,38 @@ function InvoiceList() {
     }
   };
 
+  // Refresh only the PO list (used on select focus so new POs appear instantly)
+  const refreshPOs = async () => {
+    try {
+      const res = await API.get("/purchase-orders");
+      if (res.data?.data) setOrders(res.data.data);
+    } catch (err) {
+      console.error("Failed to refresh POs:", err);
+    }
+  };
+
   useEffect(() => {
     load();
   }, []);
 
-  // When a PO is chosen, directly calculate / fill the exact PO total amount
+  // IDs of POs that already have an invoice linked
+  const invoicedPOIds = new Set(
+    invoices
+      .map((i) => (typeof i.purchaseOrder === "object" ? i.purchaseOrder?._id : i.purchaseOrder))
+      .filter(Boolean)
+  );
+
+  // When a PO is chosen, auto-fill amount AND auto-generate an invoice number
   const pickOrder = (id) => {
     const po = orders.find((o) => o._id === id);
+    const autoInvNum = po
+      ? `INV-${po.poNumber?.replace("PO-", "") || Math.floor(10000 + Math.random() * 90000)}`
+      : "";
     setForm((prev) => ({
       ...prev,
       purchaseOrder: id,
       amount: po ? Number(po.totalAmount || 0) : 0,
+      invoiceNumber: prev.invoiceNumber || autoInvNum,
     }));
   };
 
@@ -118,21 +139,25 @@ function InvoiceList() {
         <select
           value={form.purchaseOrder}
           onChange={(e) => pickOrder(e.target.value)}
-          onFocus={load}
+          onFocus={refreshPOs}
           required
           style={{ flex: "1 1 240px" }}
         >
           <option value="">
             {orders.length > 0
-              ? `-- Select PO (${orders.length} available) --`
+              ? `-- Select PO (${orders.filter((o) => !invoicedPOIds.has(o._id)).length} uninvoiced) --`
               : "-- No POs Found --"}
           </option>
-          {orders.map((o) => (
-            <option key={o._id} value={o._id}>
-              {o.poNumber} — {o.vendor?.name || "Vendor"} (₹
-              {Number(o.totalAmount || 0).toLocaleString("en-IN")})
-            </option>
-          ))}
+          {orders.map((o) => {
+            const alreadyInvoiced = invoicedPOIds.has(o._id);
+            return (
+              <option key={o._id} value={o._id} disabled={alreadyInvoiced}>
+                {alreadyInvoiced ? "✓ " : ""}{o.poNumber} — {o.vendor?.name || "Vendor"} (₹
+                {Number(o.totalAmount || 0).toLocaleString("en-IN")})
+                {alreadyInvoiced ? " [Invoiced]" : ""}
+              </option>
+            );
+          })}
         </select>
 
         <div style={{ position: "relative", flex: "0 1 160px" }}>
