@@ -24,6 +24,7 @@ const notificationRoutes = require("./routes/notificationRoutes");
 const vendorRoutes = require("./routes/vendorRoutes");
 const documentRoutes = require("./routes/documentRoutes");
 const shiftRoutes = require("./routes/shiftRoutes");
+const delayRoutes = require("./routes/delayRoutes");
 const purchaseOrderRoutes = require("./routes/purchaseOrderRoutes");
 const invoiceRoutes = require("./routes/invoiceRoutes");
 const seedInitialData = require("./config/seedData");
@@ -79,6 +80,7 @@ app.use("/api/purchase-orders", purchaseOrderRoutes);
 app.use("/api/invoices", invoiceRoutes);
 app.use("/api/documents", documentRoutes);
 app.use("/api/shifts", shiftRoutes);
+app.use("/api/delays", delayRoutes);
 
 const PORT = process.env.PORT || 5001;
 
