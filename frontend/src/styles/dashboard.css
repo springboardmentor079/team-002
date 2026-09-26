@@ -2,25 +2,44 @@
    DASHBOARD LAYOUT
 ========================= */
 
+/* App shell: the sidebar is fixed and the main column is its own scroll
+   container, so only .dashboard-content scrolls. --sidebar-w is the single
+   source of truth for the sidebar's footprint and is consumed by
+   .dashboard-main, so the two can never drift apart. */
 .dashboard-layout {
+  --sidebar-w: 190px;
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  height: 100dvh;
   background: #f4f6f9;
-  overflow-x: clip;
+  overflow: hidden;
+}
+
+/* Collapsed icon rail (see .layout-toggled .sidebar.collapsed below). */
+.dashboard-layout:has(.sidebar.collapsed) {
+  --sidebar-w: 72px;
 }
 
 /* =========================
    SIDEBAR
-========================= */
+   ========================= */
 
 .sidebar {
   width: 190px;
-  min-height: 100vh;
   background: #ffffff;
   border-right: 1px solid #e5e7eb;
   padding: 22px 10px;
   flex-shrink: 0;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* top+bottom pin the rail to the viewport. The app shell is content-box
+     (no global border-box), so a height here would be inflated by the
+     vertical padding; offsets are box-model independent. */
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   z-index: 30;
   transition: width 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -72,6 +91,10 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 
 .menu-group {
@@ -133,6 +156,20 @@
   width: 72px;
   padding-left: 8px;
   padding-right: 8px;
+  /* The rail must not clip, so its hover tooltips can paint to the right. */
+  overflow: visible;
+}
+
+/* A scroll box clips at its padding edge, so the nav gets an invisible
+   right-hand gutter (cancelled by the negative margin so the rail's own
+   layout width is unchanged). The tooltips then land inside the nav's
+   padding box and stay visible while the menu still scrolls on short
+   viewports. */
+.layout-toggled .sidebar.collapsed .sidebar-nav {
+  padding-right: 190px;
+  margin-right: -190px;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .layout-toggled .sidebar.collapsed .sidebar-logo {
@@ -204,6 +241,11 @@
 .dashboard-main {
   flex: 1;
   min-width: 0;
+  margin-left: var(--sidebar-w);
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 /* =========================
    HEADER
@@ -943,7 +985,10 @@ body.admin-scope .dashboard-header {
 .dashboard-content {
   padding: 32px;
   background: #f6f8fb;
-  min-height: calc(100vh - 68px);
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .welcome-section {
@@ -1568,6 +1613,10 @@ body.admin-scope .dashboard-header {
 
 @media (max-width: 900px) {
   /* Non-admin portals keep their automatic icon-only sidebar */
+  .dashboard-layout:not(.layout-toggled) {
+    --sidebar-w: 70px;
+  }
+
   .dashboard-layout:not(.layout-toggled) .sidebar {
     width: 70px;
     padding: 20px 8px;
@@ -1607,12 +1656,20 @@ body.admin-scope .dashboard-header {
 ========================= */
 
 @media (max-width: 767px) {
+  /* The drawer is off-canvas here, so the main column takes the full
+     width. Matches the :has() specificity so it wins over the collapsed
+     rail offset. */
+  .dashboard-layout,
+  .dashboard-layout:has(.sidebar.collapsed) {
+    --sidebar-w: 0px;
+  }
+
   .layout-toggled .sidebar,
   .layout-toggled .sidebar.collapsed {
     position: fixed;
     top: 0;
     left: 0;
-    height: 100vh;
+    bottom: 0;
     width: 264px;
     max-width: 82vw;
     padding: 22px 10px;
@@ -1625,6 +1682,17 @@ body.admin-scope .dashboard-header {
 
   .layout-toggled .sidebar.drawer-open {
     transform: translateX(0);
+  }
+
+  /* The mobile drawer scrolls as one piece (its own overflow-y: auto above)
+     instead of scrolling the nav inside a pinned logo, and it never shows
+     tooltips, so it needs none of the collapsed-rail tooltip gutter. */
+  .layout-toggled .sidebar .sidebar-nav,
+  .layout-toggled .sidebar.collapsed .sidebar-nav {
+    flex: 0 1 auto;
+    padding-right: 0;
+    margin-right: 0;
+    overflow: visible;
   }
 
   /* Always show full labels inside the mobile drawer */
@@ -1730,6 +1798,7 @@ body.admin-scope .dashboard-header {
 @media (max-width: 700px) {
   .dashboard-layout:not(.layout-toggled) {
     display: block;
+    --sidebar-w: 0px;
   }
 
   .dashboard-layout:not(.layout-toggled) .sidebar {
@@ -1886,6 +1955,16 @@ body.admin-scope .dashboard-header {
   font-weight: 700;
 
   flex-shrink: 0;
+}
+
+/* Uploaded profile photo fills the round avatar in the header and its dropdown. */
+.profile-avatar .profile-avatar-img,
+.dropdown-avatar .profile-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
 }
 
 .dropdown-user-info div:last-child {

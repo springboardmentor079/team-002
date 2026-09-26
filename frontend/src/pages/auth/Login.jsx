@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../../services/api";
+import AuthBrand from "../../components/auth/AuthBrand";
 import "../../styles/auth.css";
 
 function Login() {
@@ -148,16 +149,7 @@ function Login() {
 
       <div className="auth-left">
 
-        <div className="brand">
-          <div className="logo">
-            BT
-          </div>
-
-          <h2>
-            BuildTrack
-          </h2>
-        </div>
-
+        <AuthBrand />
 
         <div className="auth-content">
 
@@ -214,17 +206,7 @@ function Login() {
 
           {/* Mobile Logo */}
 
-          <div className="mobile-brand">
-
-            <div className="logo">
-              BT
-            </div>
-
-            <h2>
-              BuildTrack
-            </h2>
-
-          </div>
+          <AuthBrand variant="mobile" />
 
 
           {/* Header */}

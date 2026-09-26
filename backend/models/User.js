@@ -6,6 +6,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "Name is required"],
       trim: true,
+      maxlength: 120,
     },
 
     email: {
@@ -34,6 +35,32 @@ const userSchema = new mongoose.Schema(
         "client",
       ],
       default: "client",
+    },
+
+    // ================= PROFILE FIELDS =================
+    // Optional contact / organisation details. Empty string means
+    // "not provided" and is rendered as such in the UI.
+
+    phone: {
+      type: String,
+      trim: true,
+      maxlength: 20,
+      default: "",
+    },
+
+    department: {
+      type: String,
+      trim: true,
+      maxlength: 120,
+      default: "",
+    },
+
+    // Relative path of the uploaded avatar, e.g. /uploads/avatars/abc.png
+    profileImage: {
+      type: String,
+      trim: true,
+      maxlength: 255,
+      default: "",
     },
 
     resetPasswordToken: {

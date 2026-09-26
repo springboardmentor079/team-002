@@ -36,6 +36,20 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Warn early if password reset emails cannot be delivered
+const { isEmailConfigured } = require("./utils/sendEmail");
+if (!isEmailConfigured()) {
+  console.warn(
+    "WARNING: SMTP is not configured. Forgot-password will accept requests but cannot send reset emails. Set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD in backend/.env"
+  );
+}
+
+if (!process.env.FRONTEND_URL) {
+  console.warn(
+    "WARNING: FRONTEND_URL is not set. Password reset links will fall back to http://localhost:5173"
+  );
+}
+
 // Database
 connectDB()
   .then(() => {

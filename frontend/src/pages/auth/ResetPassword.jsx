@@ -1,11 +1,20 @@
 import { useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router-dom";
 import API from "../../services/api";
+import AuthBrand from "../../components/auth/AuthBrand";
 import "../../styles/auth.css";
 
+// Keep in sync with the backend / User model password rule
+const MIN_PASSWORD_LENGTH = 6;
+
 function ResetPassword() {
-  const { token } = useParams();
+  const { token: tokenParam } = useParams();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
+
+  // The emailed link uses /reset-password?token=..., the legacy route used
+  // /reset-password/:token. Support both.
+  const token = searchParams.get("token") || tokenParam || "";
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -18,39 +27,59 @@ function ResetPassword() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      setMessage("Passwords do not match");
-      setIsSuccess(false);
+    setMessage("");
+    setIsSuccess(false);
+
+    if (!token) {
+      setMessage("Password reset link is invalid or has expired.");
       return;
     }
 
-    if (password.length < 6) {
-      setMessage("Password must be at least 6 characters long");
-      setIsSuccess(false);
+    if (!password) {
+      setMessage("Please enter a new password.");
+      return;
+    }
+
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      setMessage(
+        `Password must be at least ${MIN_PASSWORD_LENGTH} characters long.`
+      );
+      return;
+    }
+
+    if (!confirmPassword) {
+      setMessage("Please confirm your new password.");
+      return;
+    }
+
+    if (password !== confirmPassword) {
+      setMessage("Passwords do not match.");
       return;
     }
 
     setIsLoading(true);
-    setMessage("");
 
     try {
-      const response = await API.put(`/auth/reset-password/${token}`, {
+      const response = await API.post("/auth/reset-password", {
+        token,
         password,
+        confirmPassword,
       });
 
       setIsSuccess(true);
       setMessage(
-        response.data.message || "Password reset successfully! Redirecting..."
+        response.data.message ||
+          "Password reset successful. Please login with your new password."
       );
 
       setTimeout(() => {
-        navigate("/login");
+        navigate("/login", { replace: true });
       }, 2000);
     } catch (err) {
       setIsSuccess(false);
       setMessage(
         err.response?.data?.message ||
-          "Invalid or expired reset token. Please request a new link."
+          "Password reset link is invalid or has expired."
       );
     } finally {
       setIsLoading(false);
@@ -61,10 +90,7 @@ function ResetPassword() {
     <div className="auth-page">
       {/* LEFT SIDE: Value Proposition */}
       <div className="auth-left">
-        <div className="brand">
-          <div className="logo">BT</div>
-          <h2>BuildTrack</h2>
-        </div>
+        <AuthBrand />
 
         <div className="auth-content">
           <span className="welcome-text">
@@ -98,10 +124,7 @@ function ResetPassword() {
       {/* RIGHT SIDE: Interactive Reset Form */}
       <div className="auth-right">
         <div className="auth-card reset-card">
-          <div className="mobile-brand">
-            <div className="logo">BT</div>
-            <h2>BuildTrack</h2>
-          </div>
+          <AuthBrand variant="mobile" />
 
           <div className="auth-header">
             <h1>Reset password</h1>
@@ -109,6 +132,13 @@ function ResetPassword() {
               Create a new password for your BuildTrack account.
             </p>
           </div>
+
+          {!token && !isSuccess && (
+            <div className="error-banner">
+              Password reset link is invalid or has expired.{" "}
+              <Link to="/forgot-password">Request a new link</Link>
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} noValidate>
             {/* NEW PASSWORD */}
@@ -121,7 +151,9 @@ function ResetPassword() {
                   placeholder="Enter new password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  minLength="6"
+                  autoComplete="new-password"
+                  minLength={MIN_PASSWORD_LENGTH}
+                  disabled={isLoading || isSuccess}
                   required
                 />
                 <button
@@ -145,7 +177,9 @@ function ResetPassword() {
                   placeholder="Confirm new password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  minLength="6"
+                  autoComplete="new-password"
+                  minLength={MIN_PASSWORD_LENGTH}
+                  disabled={isLoading || isSuccess}
                   required
                 />
                 <button
@@ -162,7 +196,7 @@ function ResetPassword() {
             <button 
               type="submit" 
               className={`auth-button ${isLoading ? "loading" : ""}`}
-              disabled={isLoading || isSuccess}
+              disabled={isLoading || isSuccess || !token}
             >
               {isLoading ? "Updating password..." : "Reset Password"}
             </button>

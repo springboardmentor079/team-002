@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../../services/api";
+import { useCurrentUser, resolveProfileImageUrl } from "../../utils/auth";
 import ThemeSwitcher from "../common/ThemeSwitcher";
 
 import { adminMenu } from "./Sidebar";
@@ -237,16 +238,9 @@ function Header({ title, onToggleSidebar, showTheme = false }) {
   // =========================
   // USER
   // =========================
-  const getParsedUser = () => {
-    try {
-      const stored =
-        localStorage.getItem("user") || sessionStorage.getItem("user");
-      return stored ? JSON.parse(stored) : null;
-    } catch {
-      return null;
-    }
-  };
-  const parsedUser = getParsedUser();
+  // Reactive: re-reads the stored user whenever the profile is updated,
+  // so a new name or photo shows up without logging in again.
+  const parsedUser = useCurrentUser();
 
   // Determine active route context defaults
   let pageRole = "admin";
@@ -311,6 +305,14 @@ function Header({ title, onToggleSidebar, showTheme = false }) {
   const displayEmail = hasMatchingRole ? (parsedUser.email || defaultEmail) : (parsedUser?.email || defaultEmail);
   const displayInitials = getInitials(displayName, defaultInitials);
   const activeRoleClass = hasMatchingRole ? (parsedUser.role || pageRole) : pageRole;
+
+  // Real uploaded photo when available, otherwise the initials avatar.
+  // A photo URL that fails to load falls back to the initials, and because the
+  // failed URL itself is stored, the next successful upload shows again.
+  const avatarUrl = resolveProfileImageUrl(parsedUser?.profileImage);
+  const [failedAvatarUrl, setFailedAvatarUrl] = useState("");
+  const showAvatarPhoto =
+    Boolean(avatarUrl) && avatarUrl !== failedAvatarUrl;
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -540,9 +542,18 @@ function Header({ title, onToggleSidebar, showTheme = false }) {
             aria-haspopup="menu"
             aria-expanded={showDropdown}
           >
-            {/* USER INITIALS */}
+            {/* USER INITIALS / PHOTO */}
             <div className={`profile-avatar role-${activeRoleClass}`}>
-              {displayInitials}
+              {showAvatarPhoto ? (
+                <img
+                  src={avatarUrl}
+                  alt=""
+                  className="profile-avatar-img"
+                  onError={() => setFailedAvatarUrl(avatarUrl)}
+                />
+              ) : (
+                displayInitials
+              )}
             </div>
 
             {/* USER INFO */}
@@ -567,7 +578,18 @@ function Header({ title, onToggleSidebar, showTheme = false }) {
             <div className="profile-dropdown" role="menu">
               <div className="dropdown-user-info">
                 <div className={`dropdown-avatar role-${activeRoleClass}`}>
-                  {displayInitials}
+                  {showAvatarPhoto ? (
+                    <img
+                      src={avatarUrl}
+                      alt=""
+                      className="profile-avatar-img"
+                      onError={() =>
+                        setFailedAvatarUrl(avatarUrl)
+                      }
+                    />
+                  ) : (
+                    displayInitials
+                  )}
                 </div>
 
                 <div>

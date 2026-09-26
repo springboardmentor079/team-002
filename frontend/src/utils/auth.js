@@ -1,4 +1,10 @@
+import { useEffect, useState } from "react";
+
 // Utility for authentication, session user extraction, and role permission checks
+
+// Fired whenever the stored user changes so headers/sidebars can re-render
+// immediately after a profile update (no logout/login required).
+export const USER_UPDATED_EVENT = "buildtrack:user-updated";
 
 export const getCurrentUser = () => {
   try {
@@ -8,6 +14,53 @@ export const getCurrentUser = () => {
   } catch {
     return null;
   }
+};
+
+// Persist the authenticated user and notify listeners. Called after login and
+// after any profile update.
+export const setCurrentUser = (user) => {
+  if (!user) return;
+
+  try {
+    const serialized = JSON.stringify(user);
+    localStorage.setItem("user", serialized);
+    sessionStorage.setItem("user", serialized);
+  } catch {
+    // Ignore storage failures (private mode / quota)
+  }
+
+  window.dispatchEvent(new Event(USER_UPDATED_EVENT));
+};
+
+// React hook: returns the current user and re-renders when it changes.
+export const useCurrentUser = () => {
+  const [user, setUser] = useState(() => getCurrentUser());
+
+  useEffect(() => {
+    const sync = () => setUser(getCurrentUser());
+
+    // Keep tabs in sync
+    window.addEventListener(USER_UPDATED_EVENT, sync);
+    window.addEventListener("storage", sync);
+
+    return () => {
+      window.removeEventListener(USER_UPDATED_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, []);
+
+  return user;
+};
+
+// Profile photos are stored as server-relative paths (e.g.
+// /uploads/avatars/x.png). Resolving them in one place keeps the header and
+// the profile screen showing the same picture.
+export const resolveProfileImageUrl = (src) => {
+  if (!src) return "";
+  if (/^https?:\/\//i.test(src)) return src;
+
+  const base = (import.meta.env.VITE_API_URL || "/api").replace(/\/api\/?$/, "");
+  return `${base}${src}`;
 };
 
 export const getUserRole = () => {

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import API from "../../services/api";
+import AuthBrand from "../../components/auth/AuthBrand";
 import "../../styles/auth.css";
 
 function Register() {
@@ -63,10 +64,7 @@ function Register() {
     <div className="auth-page">
  
       <div className="auth-left">
-        <div className="brand">
-          <div className="logo">BT</div>
-          <h2>BuildTrack</h2>
-        </div>
+        <AuthBrand />
 
         <div className="auth-content">
           <span className="welcome-text">
@@ -100,10 +98,7 @@ function Register() {
      
       <div className="auth-right">
         <div className="auth-card register-card">
-          <div className="mobile-brand">
-            <div className="logo">BT</div>
-            <h2>BuildTrack</h2>
-          </div>
+          <AuthBrand variant="mobile" />
 
           <div className="auth-header">
             <h1>Create an account</h1>
