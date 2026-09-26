@@ -2,6 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
+const sendEmail = require("../utils/sendEmail");
 
 // Generate JWT Token
 const generateToken = (id) => {
@@ -152,14 +153,19 @@ const forgotPassword = async (req, res) => {
     await user.save();
 
     // Abhi email nahi bhej rahe
-    const resetUrl = `http://localhost:5173/reset-password/${resetToken}`;
+    const resetUrl = `http://localhost:5174/reset-password/${resetToken}`;
+
+    await sendEmail({
+      email: user.email,
+      subject: "BuildTrack - Reset Your Password",
+      html: `<h2>BuildTrack - Password Reset</h2><p>Hello ${user.name},</p><p>Reset link (10 min valid):</p><a href="${resetUrl}" style="background:#16a34a;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">Reset Password</a><p><br>Or link: ${resetUrl}</p>`,
+    });
 
     res.status(200).json({
       success: true,
-      message: "Reset token generated successfully",
-      resetUrl,
-      resetToken,
+      message: "Password reset email sent successfully!",
     });
+    
   } catch (error) {
     res.status(500).json({
       success: false,
