@@ -1,0 +1,177 @@
+/* ========================================================
+   SITE ENGINEER DASHBOARD (content styles)
+   BuildTrack Platform
+   The layout, sidebar, header, profile, notifications and
+   theme live in the shared dashboard.css system so the
+   Site Engineer portal is visually identical to the Admin
+   and Project Manager dashboards. The widget shells come
+   from roleDashboards.css. This file only adds the missing
+   status variants, mobile list stacking and the premium
+   entrance/progress animations used across the app.
+======================================================== */
+
+/* ========================================================
+   MISSING STATUS VARIANTS (widget badge modifiers)
+======================================================== */
+
+.status-pill.progress {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.status-pill.pending {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.delay-icon-box.progress {
+  background: #eff6ff;
+  color: #3b82f6;
+}
+
+.delay-icon-box.pending {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.category-status.delayed {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.quick-action-icon.alerts {
+  background: #fff1f2;
+  color: #ef4444;
+}
+
+/* ========================================================
+   ANIMATIONS
+   Cards: staggered fade + translateY entrance.
+   Progress bars: smooth fill from 0 to the real value.
+======================================================== */
+
+@keyframes seFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes seProgressFill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .stats-grid .stat-card,
+  .site-categories-card,
+  .site-delay-card,
+  .site-logs-card,
+  .equipment-card,
+  .quick-actions-card {
+    opacity: 0;
+    animation: seFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .stats-grid .stat-card:nth-child(1) {
+    animation-delay: 0.05s;
+  }
+
+  .stats-grid .stat-card:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .stats-grid .stat-card:nth-child(3) {
+    animation-delay: 0.15s;
+  }
+
+  .stats-grid .stat-card:nth-child(4) {
+    animation-delay: 0.2s;
+  }
+
+  .stats-grid .stat-card:nth-child(5) {
+    animation-delay: 0.25s;
+  }
+
+  .site-categories-card {
+    animation-delay: 0.15s;
+  }
+
+  .site-delay-card {
+    animation-delay: 0.2s;
+  }
+
+  .site-logs-card {
+    animation-delay: 0.25s;
+  }
+
+  .equipment-card {
+    animation-delay: 0.3s;
+  }
+
+  .quick-actions-card {
+    animation-delay: 0.35s;
+  }
+
+  .progress-fill {
+    transform-origin: left center;
+    animation: seProgressFill 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+/* ========================================================
+   RESPONSIVE — MOBILE LIST STACKING
+   Rows stack cleanly, nothing clips, no horizontal scroll.
+======================================================== */
+
+@media (max-width: 767px) {
+  .delay-item,
+  .site-log-item {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .delay-status-col,
+  .log-meta {
+    width: 100%;
+    align-items: flex-start;
+    padding-left: 42px;
+  }
+
+  .machinery-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .equipment-badge {
+    align-self: flex-start;
+  }
+
+  .category-footer {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 450px) {
+  .delay-list,
+  .site-logs-list,
+  .machinery-list,
+  .categories-list {
+    gap: 8px;
+  }
+
+  .quick-actions-list {
+    gap: 8px;
+  }
+}

@@ -1,0 +1,138 @@
+/* ========================================================
+   WORKER DASHBOARD (content styles)
+   BuildTrack Platform
+   The layout, sidebar, header, profile, notifications and
+   theme live in the shared dashboard.css system so the
+   Worker portal is visually identical to the finalized
+   Admin, Project Manager, Site Engineer and Contractor
+   dashboards. Widget internals come from roleDashboards.css.
+   This file only adds the missing alerts variant, mobile
+   list stacking, comfortable touch targets and premium
+   entrance animations.
+======================================================== */
+
+/* ========================================================
+   MISSING STATUS VARIANTS
+======================================================== */
+
+.quick-action-icon.alerts {
+  background: #fff1f2;
+  color: #ef4444;
+}
+
+/* ========================================================
+   ANIMATIONS
+   Cards: staggered fade + translateY entrance.
+======================================================== */
+
+@keyframes wkFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .stats-grid .stat-card,
+  .worker-shift-card,
+  .worker-tasks-card,
+  .worker-safety-card,
+  .quick-actions-card {
+    opacity: 0;
+    animation: wkFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .stats-grid .stat-card:nth-child(1) {
+    animation-delay: 0.05s;
+  }
+
+  .stats-grid .stat-card:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .stats-grid .stat-card:nth-child(3) {
+    animation-delay: 0.15s;
+  }
+
+  .stats-grid .stat-card:nth-child(4) {
+    animation-delay: 0.2s;
+  }
+
+  .stats-grid .stat-card:nth-child(5) {
+    animation-delay: 0.25s;
+  }
+
+  .worker-shift-card {
+    animation-delay: 0.15s;
+  }
+
+  .worker-tasks-card {
+    animation-delay: 0.2s;
+  }
+
+  .worker-safety-card {
+    animation-delay: 0.25s;
+  }
+
+  .quick-actions-card {
+    animation-delay: 0.3s;
+  }
+}
+
+/* ========================================================
+   RESPONSIVE — MOBILE
+   Rows stack cleanly, comfortable touch targets, no
+   horizontal overflow, no clipped text.
+======================================================== */
+
+@media (max-width: 767px) {
+  .shift-main-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .shift-footer-details {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .shift-detail-item {
+    flex: 1 1 45%;
+    min-width: 0;
+  }
+
+  .worker-task-item,
+  .ppe-item {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .task-text-content {
+    min-width: 0;
+  }
+
+  .task-badge {
+    margin-left: auto;
+  }
+
+  .quick-action-item {
+    min-height: 44px;
+    padding: 12px;
+  }
+}
+
+@media (max-width: 450px) {
+  .worker-task-list,
+  .ppe-list {
+    gap: 8px;
+  }
+
+  .quick-actions-list {
+    gap: 8px;
+  }
+}

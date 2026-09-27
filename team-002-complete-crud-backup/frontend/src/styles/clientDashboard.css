@@ -1,0 +1,147 @@
+/* ========================================================
+   CLIENT DASHBOARD (content styles)
+   BuildTrack Platform
+   The layout, sidebar, header, profile, notifications and
+   theme live in the shared dashboard.css system so the
+   Client portal is visually identical to the Admin,
+   Project Manager, Site Engineer, Contractor and Worker
+   dashboards. The widget shells come from roleDashboards.css.
+   This file only adds the missing quick-action variant, the
+   Client roadmap progress animation, mobile list stacking
+   and the premium entrance animation used across the app.
+======================================================== */
+
+/* ========================================================
+   MISSING STATUS VARIANT (quick-action icon modifier)
+======================================================== */
+
+.quick-action-icon.alerts {
+  background: #fff1f2;
+  color: #ef4444;
+}
+
+/* ========================================================
+   ANIMATIONS
+   Cards: staggered fade + translateY entrance.
+   Roadmap progress bars: smooth fill from 0 to the real value.
+======================================================== */
+
+@keyframes clFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes clProgressFill {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .stats-grid .stat-card,
+  .client-milestones-card,
+  .client-financial-card,
+  .client-updates-card,
+  .quick-actions-card {
+    opacity: 0;
+    animation: clFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .stats-grid .stat-card:nth-child(1) {
+    animation-delay: 0.05s;
+  }
+
+  .stats-grid .stat-card:nth-child(2) {
+    animation-delay: 0.1s;
+  }
+
+  .stats-grid .stat-card:nth-child(3) {
+    animation-delay: 0.15s;
+  }
+
+  .stats-grid .stat-card:nth-child(4) {
+    animation-delay: 0.2s;
+  }
+
+  .stats-grid .stat-card:nth-child(5) {
+    animation-delay: 0.25s;
+  }
+
+  .client-milestones-card {
+    animation-delay: 0.15s;
+  }
+
+  .client-financial-card {
+    animation-delay: 0.2s;
+  }
+
+  .client-updates-card {
+    animation-delay: 0.25s;
+  }
+
+  .quick-actions-card {
+    animation-delay: 0.3s;
+  }
+
+  .timeline-fill {
+    transform-origin: left center;
+    animation: clProgressFill 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+}
+
+/* ========================================================
+   RESPONSIVE — MOBILE LIST STACKING
+   Long titles wrap, nothing clips, no horizontal scroll.
+======================================================== */
+
+@media (max-width: 767px) {
+  .timeline-header,
+  .timeline-footer,
+  .update-top {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .timeline-badge,
+  .update-badge {
+    flex-shrink: 0;
+  }
+
+  .client-update-item {
+    padding: 10px;
+  }
+
+  .update-content {
+    min-width: 0;
+  }
+
+  .update-content p {
+    overflow-wrap: break-word;
+  }
+}
+
+@media (max-width: 450px) {
+  .client-timeline-list,
+  .client-updates-list {
+    gap: 8px;
+  }
+
+  .quick-actions-list {
+    gap: 8px;
+  }
+
+  .client-payment-callout {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}

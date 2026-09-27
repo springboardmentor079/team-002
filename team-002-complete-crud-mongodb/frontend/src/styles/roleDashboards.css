@@ -1,0 +1,1061 @@
+/* ========================================================
+   ROLE DASHBOARDS STYLES (Site Engineer & Contractor)
+   BuildTrack Platform
+======================================================== */
+
+.role-grid {
+  grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)) !important;
+  gap: 20px;
+}
+
+/* ========================================================
+   SITE PROGRESS CATEGORIES WIDGET
+======================================================== */
+.site-categories-card .categories-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.category-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.category-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.category-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.category-status {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 9999px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.category-status.completed {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.category-status.in-progress {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.category-status.pending {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.progress-track {
+  width: 100%;
+  height: 7px;
+  background: #f1f5f9;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f59e0b, #eab308);
+  border-radius: 9999px;
+  transition: width 0.4s ease;
+}
+
+.category-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.category-percent {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* ========================================================
+   SITE DELAYS & MILESTONES WIDGET
+======================================================== */
+.delay-alert-pill {
+  font-size: 11px;
+  font-weight: 600;
+  background: #fef2f2;
+  color: #ef4444;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  border: 1px solid #fee2e2;
+}
+
+.delay-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.delay-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+}
+
+.delay-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.delay-icon-box.good {
+  background: #ecfdf5;
+  color: #10b981;
+}
+
+.delay-icon-box.warning {
+  background: #fffbeb;
+  color: #f59e0b;
+}
+
+.delay-icon-box.danger {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.delay-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.delay-details strong {
+  font-size: 12px;
+  color: #1e293b;
+}
+
+.delay-details span {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.delay-status-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.status-pill {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.status-pill.good {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.status-pill.warning {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.status-pill.danger {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.delay-status-col small {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+/* ========================================================
+   MACHINERY & EQUIPMENT STATUS
+======================================================== */
+.machinery-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.machinery-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+}
+
+.machinery-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.machinery-info strong {
+  font-size: 12px;
+  color: #1e293b;
+}
+
+.machinery-type {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.equipment-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 6px;
+}
+
+.equipment-badge.status-operational {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.equipment-badge.status-scheduled {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.equipment-badge.status-maintenance {
+  background: #fff7ed;
+  color: #ea580c;
+}
+
+/* ========================================================
+   SITE ACTIVITY LOGS
+======================================================== */
+.site-logs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.site-log-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+}
+
+.log-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.log-icon-wrap.inspection {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.log-icon-wrap.issue {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.log-icon-wrap.report {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.log-details {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.log-details strong {
+  font-size: 12px;
+  color: #1e293b;
+}
+
+.log-details span {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.log-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 3px;
+}
+
+.log-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.log-badge.inspection {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.log-badge.issue {
+  background: #fef2f2;
+  color: #dc2626;
+}
+
+.log-badge.report {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+.log-meta small {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+/* ========================================================
+   CONTRACTOR WORK ORDERS
+======================================================== */
+.work-orders-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.work-order-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+}
+
+.order-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.order-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.order-id {
+  font-size: 10px;
+  font-weight: 700;
+  background: #e2e8f0;
+  color: #475569;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.order-title-wrap strong {
+  font-size: 12px;
+  color: #1e293b;
+}
+
+.order-meta {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.order-progress-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.order-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #e2e8f0;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.order-progress-fill {
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 9999px;
+}
+
+.order-status-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.order-status-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.order-status-badge.good {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.order-status-badge.warning {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.order-status-badge.danger {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.order-pct {
+  font-size: 11px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* ========================================================
+   MATERIAL REQUISITIONS WIDGET
+======================================================== */
+.material-req-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.material-req-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 8px;
+}
+
+.req-col-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.req-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.req-id {
+  font-size: 10px;
+  font-weight: 700;
+  color: #64748b;
+  background: #f1f5f9;
+  padding: 1px 5px;
+  border-radius: 3px;
+}
+
+.req-title-row strong {
+  font-size: 12px;
+  color: #1e293b;
+}
+
+.req-meta {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.req-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+}
+
+.req-badge.good {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.req-badge.transit {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.req-badge.warning {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+/* ========================================================
+   ROLE AVATAR COLOR THEMES
+======================================================== */
+.profile-avatar.role-site_engineer {
+  background: #dbeafe !important;
+  color: #1d4ed8 !important;
+}
+.dropdown-avatar.role-site_engineer {
+  background: #2563eb !important;
+  color: #ffffff !important;
+}
+
+.profile-avatar.role-contractor {
+  background: #d1fae5 !important;
+  color: #047857 !important;
+}
+.dropdown-avatar.role-contractor {
+  background: #059669 !important;
+  color: #ffffff !important;
+}
+
+.profile-avatar.role-project_manager {
+  background: #ffedd5 !important;
+  color: #c2410c !important;
+}
+.dropdown-avatar.role-project_manager {
+  background: #ea580c !important;
+  color: #ffffff !important;
+}
+
+.profile-avatar.role-admin {
+  background: #fef3c7 !important;
+  color: #d97706 !important;
+}
+.dropdown-avatar.role-admin {
+  background: #d97706 !important;
+  color: #ffffff !important;
+}
+
+.profile-avatar.role-client {
+  background: #f5f3ff !important;
+  color: #7c3aed !important;
+}
+.dropdown-avatar.role-client {
+  background: #7c3aed !important;
+  color: #ffffff !important;
+}
+
+.profile-avatar.role-worker {
+  background: #f0fdfa !important;
+  color: #0d9488 !important;
+}
+.dropdown-avatar.role-worker {
+  background: #0d9488 !important;
+  color: #ffffff !important;
+}
+
+/* ========================================================
+   CLIENT DASHBOARD STYLES
+======================================================== */
+.client-project-pill {
+  font-size: 11px;
+  font-weight: 600;
+  background: #f5f3ff;
+  color: #7c3aed;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  border: 1px solid #ede9fe;
+}
+
+.client-timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.timeline-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.timeline-marker {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.timeline-marker.good {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.timeline-marker.progress {
+  background: #f5f3ff;
+  color: #7c3aed;
+  border: 2px solid #7c3aed;
+}
+
+.timeline-marker.pending {
+  background: #f1f5f9;
+  color: #94a3b8;
+}
+
+.timeline-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.timeline-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.timeline-header strong {
+  font-size: 12px;
+  color: #1e293b;
+}
+
+.timeline-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.timeline-badge.good {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.timeline-badge.progress {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.timeline-badge.pending {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.timeline-track {
+  width: 100%;
+  height: 6px;
+  background: #f1f5f9;
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.timeline-fill {
+  height: 100%;
+  border-radius: 9999px;
+}
+
+.timeline-fill.good {
+  background: #10b981;
+}
+
+.timeline-fill.progress {
+  background: #7c3aed;
+}
+
+.timeline-fill.pending {
+  background: transparent;
+}
+
+.timeline-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #64748b;
+}
+
+.timeline-pct {
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.client-payment-callout {
+  margin-top: 14px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+}
+
+.callout-label {
+  color: #64748b;
+}
+
+.callout-value {
+  color: #0f172a;
+}
+
+.client-updates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.client-update-item {
+  display: flex;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+}
+
+.update-icon-box {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.update-icon-box.verified {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.update-icon-box.media {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.update-icon-box.info {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.update-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.update-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.update-top strong {
+  font-size: 12px;
+  color: #1e293b;
+}
+
+.update-badge {
+  font-size: 9px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 4px;
+  text-transform: uppercase;
+}
+
+.update-badge.verified {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.update-badge.media {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.update-badge.info {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.update-content p {
+  margin: 2px 0;
+  font-size: 11px;
+  color: #64748b;
+}
+
+.update-content small {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+/* ========================================================
+   WORKER DASHBOARD STYLES
+======================================================== */
+.punch-status-badge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  background: #f0fdfa;
+  color: #0d9488;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  border: 1px solid #ccfbf1;
+}
+
+.worker-shift-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.shift-main-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.shift-site-info,
+.shift-timing-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.shift-label {
+  font-size: 10px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+}
+
+.shift-site-name,
+.shift-hours {
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.shift-subtext {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.shift-divider {
+  height: 1px;
+  background: #f1f5f9;
+}
+
+.shift-footer-details {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.shift-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.shift-detail-item span {
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.shift-detail-item strong {
+  font-size: 11px;
+  color: #1e293b;
+}
+
+.worker-task-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.worker-task-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  border-radius: 8px;
+  border: 1px solid #f1f5f9;
+  transition: all 0.2s ease;
+}
+
+.worker-task-item:hover {
+  background: #f1f5f9;
+}
+
+.task-checkbox-wrap {
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.task-unchecked {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #cbd5e1;
+  border-radius: 4px;
+  background: white;
+}
+
+.task-text-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.task-text-content strong {
+  font-size: 12px;
+  color: #1e293b;
+}
+
+.text-done {
+  text-decoration: line-through;
+  color: #94a3b8 !important;
+}
+
+.task-text-content span {
+  font-size: 10px;
+  color: #64748b;
+}
+
+.task-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 4px;
+}
+
+.task-badge.done {
+  background: #ecfdf5;
+  color: #059669;
+}
+
+.task-badge.pending {
+  background: #fffbeb;
+  color: #d97706;
+}
+
+.safety-cleared-pill {
+  font-size: 11px;
+  font-weight: 600;
+  background: #ecfdf5;
+  color: #059669;
+  padding: 3px 8px;
+  border-radius: 9999px;
+  border: 1px solid #a7f3d0;
+}
+
+.ppe-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ppe-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 10px;
+  background: #f8fafc;
+  border-radius: 6px;
+  border: 1px solid #f1f5f9;
+}
+
+.ppe-check-circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #10b981;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ppe-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.ppe-info strong {
+  font-size: 11px;
+  color: #1e293b;
+}
+
+.ppe-info span {
+  font-size: 9px;
+  color: #64748b;
+}
+
+.ppe-mandatory-badge {
+  font-size: 9px;
+  font-weight: 700;
+  color: #dc2626;
+  background: #fef2f2;
+  padding: 2px 5px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.safety-emergency-box {
+  margin-top: 12px;
+  padding: 8px 10px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #475569;
+}
+
+

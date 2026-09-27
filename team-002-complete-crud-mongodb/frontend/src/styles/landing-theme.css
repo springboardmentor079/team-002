@@ -1,0 +1,294 @@
+/* ============================================================
+   BuildTrack — Theme System (Dark / Light)
+   Dark palette = original design tokens. Light palette maps the
+   exact same component rules to a clean, spacious light theme.
+   ============================================================ */
+
+:root {
+  color-scheme: dark;
+
+  /* Surfaces */
+  --bg: #0c1117;
+  --bg-deep: #0b1016;
+  --surface-1: #1a2029;
+  --surface-2: #222b37;
+  --surface-3: #252e3a;
+  --surface-4: #26303c;
+
+  /* Borders */
+  --border: #303b48;
+  --border-2: #33404c;
+  --border-strong: #3b4755;
+  --border-soft: #28323e;
+  --border-nav: #25303c;
+  --border-mid: #313b47;
+
+  /* Text */
+  --text: #e7e9ed;
+  --text-2: #dce0e5;
+  --text-3: #9ba4b0;
+  --text-4: #98a2af;
+  --text-5: #9099a6;
+  --text-muted: #8d96a3;
+  --text-mid: #89939f;
+  --text-mutedb: #8e98a5;
+  --text-faint: #808a96;
+  --text-dim: #69737f;
+  --text-title: #b7bec7;
+  --text-2b: #c9cfd6;
+
+  /* Accent */
+  --accent: #ff6b16;
+  --accent-2: #ff6815;
+  --accent-3: #ff7628;
+  --accent-4: #ff711f;
+  --accent-5: #ff7c30;
+  --accent-border: #7b3d18;
+  --accent-wash: #211711;
+  --accent-wash-2: rgba(255, 107, 22, 0.07);
+
+  /* Success */
+  --success: #55d3a1;
+  --success-2: #5ed1a3;
+  --success-soft: #57d09e;
+  --success-border: #276b55;
+
+  /* Misc */
+  --step: #6c4a36;
+  --btn-ghost-border: #52606d;
+  --chart-label: #a8b0b9;
+  --bar-track: #303641;
+  --ring-halo: #2b2924;
+  --circle-text: #ffffff;
+  --category-title: #ffffff;
+  --text-soft: #c1c5ca;
+
+  /* Multi-stop visual tokens */
+  --img-grad: linear-gradient(135deg, #1e2a34, #10151c);
+  --dash-grad: linear-gradient(135deg, #25251f, #10151b);
+  --dash-border: #3b3429;
+  --cta-grad: radial-gradient(circle at center, #39251d 0%, #1a2029 55%);
+  --cta-border: #313c48;
+  --overlay-hero: linear-gradient(to bottom, transparent 40%, #0c1117 100%);
+  --overlay-cat: linear-gradient(to top, rgba(7, 10, 14, 0.95), transparent 70%);
+
+  /* Interaction-layer tokens */
+  --grid-line: rgba(255, 255, 255, 0.022);
+  --bg-glass: rgba(12, 17, 23, 0.82);
+  --skeleton-1: #1b242e;
+  --skeleton-2: #232e3a;
+  --chip-bg: rgba(20, 26, 34, 0.88);
+  --tooltip-bg: #222b37;
+  --tooltip-border: #3b4755;
+  --menu-bg: #0b1016;
+  --blueprint-ink: #d3d9e0;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Surfaces */
+  --bg: #f4f6f9;
+  --bg-deep: #e9edf3;
+  --surface-1: #ffffff;
+  --surface-2: #eef2f7;
+  --surface-3: #e9eef4;
+  --surface-4: #e3e9f1;
+
+  /* Borders */
+  --border: #dde4ec;
+  --border-2: #d6dee8;
+  --border-strong: #c8d1dc;
+  --border-soft: #e2e8f0;
+  --border-nav: #e3e8ef;
+  --border-mid: #dbe2ea;
+
+  /* Text */
+  --text: #111a23;
+  --text-2: #1a2430;
+  --text-3: #44515f;
+  --text-4: #44515f;
+  --text-5: #516072;
+  --text-muted: #5c6b7d;
+  --text-mid: #64738a;
+  --text-mutedb: #5b6a7c;
+  --text-faint: #55637a;
+  --text-dim: #7c8898;
+  --text-title: #24303d;
+  --text-2b: #24303d;
+
+  /* Accent */
+  --accent: #ff6b16;
+  --accent-2: #ff6815;
+  --accent-3: #e9550a;
+  --accent-4: #e9550a;
+  --accent-5: #ff7c30;
+  --accent-border: #ffb893;
+  --accent-wash: #fdeee2;
+  --accent-wash-2: rgba(255, 107, 22, 0.1);
+
+  /* Success */
+  --success: #0f8f64;
+  --success-2: #0e8a60;
+  --success-soft: #0e9467;
+  --success-border: #7fd4b4;
+
+  /* Misc */
+  --step: #b07a4d;
+  --btn-ghost-border: #c2ccd8;
+  --chart-label: #5f6d7e;
+  --bar-track: #e2e8ef;
+  --ring-halo: #e6ebf1;
+  --circle-text: #131c26;
+  --category-title: #ffffff;
+  --text-soft: #e6eaf0;
+
+  /* Multi-stop visual tokens */
+  --img-grad: linear-gradient(135deg, #e7ecf2, #d3dbe7);
+  --dash-grad: linear-gradient(135deg, #f6f2e9, #e6ecf3);
+  --dash-border: #e6dbc6;
+  --cta-grad: radial-gradient(circle at center, #ffdfc2 0%, #ffffff 62%);
+  --cta-border: #e7dfdf;
+  --overlay-hero: linear-gradient(
+    to bottom,
+    transparent 0%,
+    transparent 55%,
+    rgba(255, 255, 255, 0.14) 78%,
+    rgba(255, 255, 255, 0.34) 92%,
+    rgba(255, 255, 255, 0.55) 100%
+  );
+  --overlay-cat: linear-gradient(to top, rgba(13, 20, 30, 0.72), transparent 70%);
+
+  /* Interaction-layer tokens */
+  --grid-line: rgba(20, 30, 45, 0.045);
+  --bg-glass: rgba(244, 246, 249, 0.85);
+  --skeleton-1: #e3e9f0;
+  --skeleton-2: #edf2f7;
+  --chip-bg: rgba(255, 255, 255, 0.94);
+  --tooltip-bg: #ffffff;
+  --tooltip-border: #d4dcea;
+  --menu-bg: #f2f5f9;
+  --blueprint-ink: #2c3a4a;
+}
+
+html,
+body {
+  background-color: var(--bg);
+  transition: background-color 0.5s ease;
+}
+
+/* Smooth chrome color morphing when the theme flips */
+body {
+  color: var(--text);
+  transition:
+    background-color 0.5s ease,
+    color 0.5s ease;
+}
+
+.section,
+.stats,
+footer,
+.tag,
+.hero p,
+.section-heading p,
+.stat-item,
+.cta-box,
+.progress-circle,
+.footer-brand p,
+.footer-column h4,
+.footer-bottom {
+  transition:
+    background-color 0.45s ease,
+    border-color 0.45s ease,
+    color 0.45s ease,
+    box-shadow 0.45s ease;
+}
+
+/* ---------------- Theme toggle ---------------- */
+
+.theme-toggle {
+  position: relative;
+  width: 58px;
+  height: 30px;
+  border-radius: 999px;
+  border: 1px solid var(--border-2);
+  background: var(--surface-2);
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 9px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition:
+    border-color 0.3s ease,
+    background-color 0.45s ease,
+    box-shadow 0.3s ease;
+}
+
+.theme-toggle-thumb {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.22);
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
+  pointer-events: none;
+}
+
+.theme-toggle.theme-light .theme-toggle-thumb {
+  transform: translateX(28px);
+}
+
+.theme-toggle-icon {
+  color: var(--text-muted);
+  z-index: 2;
+  transition:
+    color 0.3s ease,
+    opacity 0.35s ease,
+    transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.theme-toggle.theme-dark .theme-toggle-sun {
+  opacity: 0;
+  transform: rotate(-120deg) scale(0.45);
+}
+
+.theme-toggle.theme-light .theme-toggle-moon {
+  opacity: 0;
+  transform: rotate(120deg) scale(0.45);
+}
+
+.theme-toggle:hover {
+  border-color: var(--accent-border);
+  box-shadow: 0 4px 16px -6px rgba(0, 0, 0, 0.35);
+}
+
+.theme-toggle:active .theme-toggle-thumb {
+  transform: scale(0.92);
+}
+
+.theme-toggle.theme-light:active .theme-toggle-thumb {
+  transform: translateX(28px) scale(0.92);
+}
+
+/* ---------------- Theme reveal overlay ---------------- */
+
+.theme-reveal {
+  position: fixed;
+  width: 200vmax;
+  height: 200vmax;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.75s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1500;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.theme-reveal-active {
+  transform: translate(-50%, -50%) scale(1);
+}

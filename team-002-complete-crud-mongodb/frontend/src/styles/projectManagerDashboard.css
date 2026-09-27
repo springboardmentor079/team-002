@@ -1,0 +1,512 @@
+/* ========================================================
+   PROJECT MANAGER DASHBOARD (content styles)
+   BuildTrack Platform
+   The layout, sidebar, header, profile, notifications and
+   theme live in the shared dashboard.css system so the PM
+   portal is visually identical to the Admin dashboard.
+   Only dashboard CONTENT styles live here.
+======================================================== */
+
+/* ========================================================
+   WELCOME SECTION
+======================================================== */
+
+.pm-welcome-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.pm-welcome-section h1 {
+  margin: 0 0 6px;
+  font-size: 25px;
+  color: #334155;
+}
+
+.pm-welcome-section p {
+  margin: 0;
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* ========================================================
+   STATISTICS CARDS (mirrors Admin .stats-grid / .stat-card)
+======================================================== */
+
+.pm-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  margin-bottom: 26px;
+}
+
+.pm-stat-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+  transition:
+    transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.22s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pm-stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 24px -10px rgba(15, 23, 42, 0.18);
+  }
+}
+
+.pm-stat-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.pm-stat-title {
+  margin: 0 0 8px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  color: #64748b;
+}
+
+.pm-stat-card h2 {
+  margin: 0;
+  font-size: 25px;
+  color: #334155;
+}
+
+.pm-stat-icon {
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+}
+
+.pm-stat-icon.orange {
+  background: #fff7ed;
+  color: #d97706;
+}
+
+.pm-stat-icon.green {
+  background: #ecfdf5;
+  color: #10b981;
+}
+
+.pm-stat-icon.red {
+  background: #fef2f2;
+  color: #ef4444;
+}
+
+.pm-stat-subtitle {
+  margin: 10px 0 0;
+  font-size: 11.5px;
+  color: #94a3b8;
+}
+
+/* ========================================================
+   CHARTS GRID
+======================================================== */
+
+.pm-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
+}
+
+.pm-charts-grid > * {
+  min-width: 0;
+}
+
+/* ========================================================
+   CARDS (progress + budget share the Admin card language)
+======================================================== */
+
+.project-progress-card,
+.budget-utilization-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  min-height: 330px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.chart-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.chart-header p {
+  margin: 5px 0 0;
+  font-size: 12.5px;
+  color: #94a3b8;
+}
+
+.live-data-text,
+.live-data-badge {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  color: #059669;
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  padding: 5px 10px;
+  border-radius: 9999px;
+}
+
+.live-data-text::before,
+.live-data-badge::before {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+}
+
+.chart-loading,
+.budget-loading {
+  margin: auto 0;
+  padding: 48px 0;
+  text-align: center;
+  font-size: 12.5px;
+  color: #94a3b8;
+}
+
+/* ========================================================
+   PROJECT PROGRESS BAR CHART
+======================================================== */
+
+.progress-chart {
+  display: flex;
+  margin-top: 18px;
+  height: 250px;
+  min-width: 0;
+}
+
+.chart-y-axis {
+  width: 42px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 30px;
+}
+
+.chart-y-axis span {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.bars-container {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-end;
+  gap: 8px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.bar-item {
+  height: 100%;
+  min-width: 0;
+  flex: 1;
+  max-width: 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.bar-area {
+  height: 210px;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent,
+    transparent 51px,
+    #edf0f4 52px
+  );
+}
+
+.progress-bar {
+  width: 26px;
+  min-height: 10px;
+  background: linear-gradient(180deg, #f59e0b, #ffb52e);
+  border-radius: 6px 6px 0 0;
+  transition: height 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.bar-value {
+  position: absolute;
+  font-size: 11px;
+  font-weight: 600;
+  color: #475569;
+  transform: translateY(-5px);
+}
+
+.bar-item p {
+  margin: 10px 0 0;
+  max-width: 100%;
+  font-size: 11px;
+  font-weight: 500;
+  color: #64748b;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ========================================================
+   BUDGET UTILIZATION
+======================================================== */
+
+.budget-content {
+  margin-top: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.budget-chart-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.budget-center-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  pointer-events: none;
+  text-align: center;
+}
+
+.budget-center-text strong {
+  font-size: 30px;
+  color: #1e293b;
+}
+
+.budget-center-text span {
+  margin-top: 2px;
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.budget-center-text small {
+  margin-top: 2px;
+  font-size: 10px;
+  color: #94a3b8;
+}
+
+.budget-details {
+  width: 100%;
+  max-width: 340px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.budget-detail-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.budget-dot {
+  width: 9px;
+  height: 9px;
+  margin-top: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.budget-dot.total-dot {
+  background: #94a3b8;
+}
+
+.budget-dot.used-dot {
+  background: #f59e0b;
+}
+
+.budget-dot.remaining-dot {
+  background: #d1d5db;
+}
+
+.budget-detail-item p {
+  margin: 0 0 3px;
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.budget-detail-item strong {
+  font-size: 15px;
+  color: #1e293b;
+}
+
+/* ========================================================
+   OTHER PM PAGES (small shared controls used by PM pages)
+======================================================== */
+
+.pm-search-box {
+  width: 240px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 0 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  color: #94a3b8;
+}
+
+.pm-search-box input {
+  border: none;
+  outline: none;
+  background: transparent;
+  width: 100%;
+  font-size: 12.5px;
+  color: #334155;
+}
+
+.pm-menu-item {
+  width: 100%;
+  height: 35px;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  cursor: pointer;
+  color: #4b5563;
+  font-size: 12px;
+}
+
+.pm-menu-item.active {
+  background: #fff3d6;
+  color: #b8770a;
+  font-weight: 600;
+}
+
+/* ========================================================
+   RESPONSIVE
+======================================================== */
+
+@media (max-width: 1200px) {
+  .pm-charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1100px) {
+  .pm-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  .pm-welcome-section {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+
+  .pm-welcome-section h1 {
+    font-size: 21px;
+  }
+
+  .pm-stats-grid {
+    gap: 12px;
+  }
+
+  .pm-stat-card {
+    padding: 16px;
+  }
+
+  .project-progress-card,
+  .budget-utilization-card {
+    padding: 16px;
+  }
+
+  .pm-search-box {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .pm-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .progress-chart {
+    height: 220px;
+  }
+
+  .bar-area {
+    height: 185px;
+  }
+
+  .chart-y-axis {
+    width: 38px;
+  }
+}
+
+@media (max-width: 450px) {
+  .pm-welcome-section h1 {
+    font-size: 19px;
+  }
+
+  .pm-stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .budget-details {
+    max-width: none;
+  }
+
+  .live-data-text,
+  .live-data-badge {
+    padding: 4px 8px;
+    font-size: 9px;
+  }
+}
