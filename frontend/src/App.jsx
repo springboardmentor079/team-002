@@ -1,11 +1,20 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
+// Keeps the global user state (and therefore every avatar) in sync with the
+// backend on app start
+import UserProfileSync from "./components/common/UserProfileSync";
+
 // Authentication
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ForgotPassword from "./pages/auth/ForgotPassword";
 import ResetPassword from "./pages/auth/ResetPassword";
 import LandingPage from "./pages/LandingPage";
+
+// Hides a portal page from a role that may not have it, so the sidebar
+// hiding it is backed by a route check as well.
+import RoleRoute from "./components/auth/RoleRoute";
+import { ROLES } from "./config/roleMenu";
 
 // Layouts
 import AdminLayout from "./components/layout/AdminLayout";
@@ -28,6 +37,15 @@ import AdminAnalytics from "./pages/admin/AdminAnalytics";
 import AdminNotifications from "./pages/admin/AdminNotifications";
 import AdminSettings from "./pages/admin/AdminSettings";
 import AdminDocuments from "./pages/admin/AdminDocuments";
+
+// Maintenance Scheduling (shared by every role that maintains assets)
+import MaintenanceList from "./pages/maintenance/MaintenanceList";
+import MaintenanceDetails from "./pages/maintenance/MaintenanceDetails";
+
+// Payroll Monitoring (admin, project manager, and the worker whose
+// payslip it is - the same set the payroll API accepts)
+import PayrollList from "./pages/payroll/PayrollList";
+import PayrollDetails from "./pages/payroll/PayrollDetails";
 
 // Project Manager Pages
 import ProjectManagerDashboard from "./pages/projectManager/ProjectManagerDashboard";
@@ -79,13 +97,13 @@ import WorkerTasks from "./pages/worker/WorkerTasks";
 import WorkerAttendance from "./pages/worker/WorkerAttendance";
 import WorkerShifts from "./pages/worker/WorkerShifts";
 import WorkerSafety from "./pages/worker/WorkerSafety";
-import WorkerWages from "./pages/worker/WorkerWages";
 import WorkerNotifications from "./pages/worker/WorkerNotifications";
 import WorkerSettings from "./pages/worker/WorkerSettings";
 
 function App() {
   return (
     <BrowserRouter>
+      <UserProfileSync />
       <Routes>
         {/* Authentication */}
         <Route path="/" element={<LandingPage />} />
@@ -96,7 +114,14 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         {/* Admin Portal */}
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route
+          path="/admin"
+          element={
+            <RoleRoute allowedRoles={[ROLES.ADMIN]}>
+              <AdminLayout />
+            </RoleRoute>
+          }
+        >
           <Route index element={<AdminDashboard />} />
           <Route path="dashboard" element={<AdminDashboard />} />
           <Route path="projects" element={<AdminProjects />} />
@@ -109,11 +134,36 @@ function App() {
           <Route path="analytics" element={<AdminAnalytics />} />
           <Route path="notifications" element={<AdminNotifications />} />
           <Route path="documents" element={<AdminDocuments />} />
+          <Route
+            path="maintenance"
+            element={<MaintenanceList basePath="/admin/maintenance" />}
+          />
+          <Route
+            path="maintenance/:id"
+            element={
+              <MaintenanceDetails basePath="/admin/maintenance" />
+            }
+          />
+          <Route
+            path="payroll"
+            element={<PayrollList basePath="/admin/payroll" />}
+          />
+          <Route
+            path="payroll/:id"
+            element={<PayrollDetails basePath="/admin/payroll" />}
+          />
           <Route path="settings" element={<AdminSettings />} />
         </Route>
 
         {/* Project Manager Portal */}
-        <Route path="/project-manager" element={<ProjectManagerLayout />}>
+        <Route
+          path="/project-manager"
+          element={
+            <RoleRoute allowedRoles={[ROLES.PROJECT_MANAGER]}>
+              <ProjectManagerLayout />
+            </RoleRoute>
+          }
+        >
           <Route index element={<ProjectManagerDashboard />} />
           <Route path="dashboard" element={<ProjectManagerDashboard />} />
           <Route path="projects" element={<PMProjects />} />
@@ -125,11 +175,42 @@ function App() {
           <Route path="reports" element={<PMReports />} />
           <Route path="analytics" element={<PMAnalytics />} />
           <Route path="notifications" element={<PMNotifications />} />
+          <Route
+            path="maintenance"
+            element={
+              <MaintenanceList basePath="/project-manager/maintenance" />
+            }
+          />
+          <Route
+            path="maintenance/:id"
+            element={
+              <MaintenanceDetails basePath="/project-manager/maintenance" />
+            }
+          />
+          <Route
+            path="payroll"
+            element={
+              <PayrollList basePath="/project-manager/payroll" />
+            }
+          />
+          <Route
+            path="payroll/:id"
+            element={
+              <PayrollDetails basePath="/project-manager/payroll" />
+            }
+          />
           <Route path="settings" element={<PMSettings />} />
         </Route>
 
         {/* Site Engineer Portal */}
-        <Route path="/site-engineer" element={<SiteEngineerLayout />}>
+        <Route
+          path="/site-engineer"
+          element={
+            <RoleRoute allowedRoles={[ROLES.SITE_ENGINEER]}>
+              <SiteEngineerLayout />
+            </RoleRoute>
+          }
+        >
           <Route index element={<SiteEngineerDashboard />} />
           <Route path="dashboard" element={<SiteEngineerDashboard />} />
           <Route path="site-progress" element={<SiteEngineerProgress />} />
@@ -138,12 +219,31 @@ function App() {
           <Route path="inspections" element={<SiteEngineerInspections />} />
           <Route path="delays" element={<SiteEngineerDelays />} />
           <Route path="equipment" element={<SiteEngineerEquipment />} />
+          <Route
+            path="maintenance"
+            element={
+              <MaintenanceList basePath="/site-engineer/maintenance" />
+            }
+          />
+          <Route
+            path="maintenance/:id"
+            element={
+              <MaintenanceDetails basePath="/site-engineer/maintenance" />
+            }
+          />
           <Route path="notifications" element={<SiteEngineerNotifications />} />
           <Route path="settings" element={<SiteEngineerSettings />} />
         </Route>
 
         {/* Contractor Portal */}
-        <Route path="/contractor" element={<ContractorLayout />}>
+        <Route
+          path="/contractor"
+          element={
+            <RoleRoute allowedRoles={[ROLES.CONTRACTOR]}>
+              <ContractorLayout />
+            </RoleRoute>
+          }
+        >
           <Route index element={<ContractorDashboard />} />
           <Route path="dashboard" element={<ContractorDashboard />} />
           <Route path="work-orders" element={<ContractorWorkOrdersPage />} />
@@ -151,12 +251,31 @@ function App() {
           <Route path="shifts" element={<ContractorShifts />} />
           <Route path="material-requests" element={<ContractorMaterialRequests />} />
           <Route path="equipment" element={<ContractorEquipment />} />
+          <Route
+            path="maintenance"
+            element={
+              <MaintenanceList basePath="/contractor/maintenance" />
+            }
+          />
+          <Route
+            path="maintenance/:id"
+            element={
+              <MaintenanceDetails basePath="/contractor/maintenance" />
+            }
+          />
           <Route path="notifications" element={<ContractorNotifications />} />
           <Route path="settings" element={<ContractorSettings />} />
         </Route>
 
         {/* Client Portal */}
-        <Route path="/client" element={<ClientLayout />}>
+        <Route
+          path="/client"
+          element={
+            <RoleRoute allowedRoles={[ROLES.CLIENT]}>
+              <ClientLayout />
+            </RoleRoute>
+          }
+        >
           <Route index element={<ClientDashboard />} />
           <Route path="dashboard" element={<ClientDashboard />} />
           <Route path="projects" element={<ClientProjects />} />
@@ -169,14 +288,40 @@ function App() {
         </Route>
 
         {/* Worker Portal */}
-        <Route path="/worker" element={<WorkerLayout />}>
+        <Route
+          path="/worker"
+          element={
+            <RoleRoute allowedRoles={[ROLES.WORKER]}>
+              <WorkerLayout />
+            </RoleRoute>
+          }
+        >
           <Route index element={<WorkerDashboard />} />
           <Route path="dashboard" element={<WorkerDashboard />} />
           <Route path="tasks" element={<WorkerTasks />} />
           <Route path="attendance" element={<WorkerAttendance />} />
           <Route path="shifts" element={<WorkerShifts />} />
           <Route path="safety" element={<WorkerSafety />} />
-          <Route path="wages" element={<WorkerWages />} />
+          <Route
+            path="wages"
+            element={<PayrollList basePath="/worker/payroll" />}
+          />
+          <Route
+            path="maintenance"
+            element={<MaintenanceList basePath="/worker/maintenance" />}
+          />
+          <Route
+            path="maintenance/:id"
+            element={<MaintenanceDetails basePath="/worker/maintenance" />}
+          />
+          <Route
+            path="payroll"
+            element={<PayrollList basePath="/worker/payroll" />}
+          />
+          <Route
+            path="payroll/:id"
+            element={<PayrollDetails basePath="/worker/payroll" />}
+          />
           <Route path="notifications" element={<WorkerNotifications />} />
           <Route path="settings" element={<WorkerSettings />} />
         </Route>

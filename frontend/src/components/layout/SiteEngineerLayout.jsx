@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import { siteEngineerMenu } from "./SiteEngineerSidebar";
 import "../../styles/dashboard.css";
 import "../../styles/roleDashboards.css";
 import "../../styles/siteEngineerDashboard.css";
@@ -41,7 +40,6 @@ function SiteEngineerLayout() {
   return (
     <div className="dashboard-layout layout-toggled">
       <Sidebar
-        menu={siteEngineerMenu}
         collapsed={collapsed}
         drawerOpen={drawerOpen}
         onClose={() => setDrawerOpen(false)}

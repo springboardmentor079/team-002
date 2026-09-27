@@ -54,6 +54,25 @@ const getFrontendUrl = () => {
 const buildResetUrl = (rawToken) =>
   `${getFrontendUrl()}/reset-password?token=${encodeURIComponent(rawToken)}`;
 
+// Build the only shape of a user that is ever allowed to leave the API.
+// `password`, `resetPasswordToken` and `resetPasswordExpire` are excluded by
+// the schema (select: false) and are never referenced here.
+//
+// Login and register both answer with this exact shape, so the client can
+// populate its global user state (avatar included) in one round trip and
+// never has to wait for the settings screen to reveal the profile photo.
+const toPublicUser = (user) => ({
+  id: user._id,
+  name: user.name,
+  email: user.email,
+  phone: user.phone || "",
+  department: user.department || "",
+  profileImage: user.profileImage || "",
+  role: user.role,
+  createdAt: user.createdAt,
+  updatedAt: user.updatedAt,
+});
+
 // ================= PROFILE PHOTO UPLOAD =================
 // Reuses the same multer disk-storage approach as the existing document
 // upload feature: files land in `uploads/` which server.js already serves
@@ -182,12 +201,7 @@ const registerUser = async (req, res) => {
       success: true,
       message: "User registered successfully",
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
+      user: toPublicUser(user),
     });
   } catch (error) {
     res.status(500).json({
@@ -237,12 +251,7 @@ const loginUser = async (req, res) => {
       success: true,
       message: "Login successful",
       token,
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-      },
+      user: toPublicUser(user),
     });
   } catch (error) {
     res.status(500).json({
@@ -438,20 +447,8 @@ const resetPassword = async (req, res) => {
 
 // ================= PROFILE =================
 
-// Build the only shape of a user that is ever allowed to leave the API.
-// `password`, `resetPasswordToken` and `resetPasswordExpire` are excluded by
-// the schema (select: false) and are never referenced here.
-const toPublicUser = (user) => ({
-  id: user._id,
-  name: user.name,
-  email: user.email,
-  phone: user.phone || "",
-  department: user.department || "",
-  profileImage: user.profileImage || "",
-  role: user.role,
-  createdAt: user.createdAt,
-  updatedAt: user.updatedAt,
-});
+// `toPublicUser` is declared at the top of this file so login and register can
+// share it.
 
 // The authenticated user always comes from the JWT via the `protect`
 // middleware, so a user can never read or edit somebody else's profile.

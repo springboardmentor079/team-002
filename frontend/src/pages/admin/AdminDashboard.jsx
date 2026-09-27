@@ -7,6 +7,7 @@ import RecentActivity from "../../components/dashboard/RecentActivity";
 import UserRolesChart from "../../components/dashboard/UserRolesChart";
 import ProjectStatus from "../../components/dashboard/ProjectStatus";
 import QuickActions from "../../components/dashboard/QuickActions";
+import MaintenanceSnapshot from "../../components/dashboard/MaintenanceSnapshot";
 
 import api from "../../services/api";
 
@@ -211,6 +212,11 @@ function AdminDashboard() {
   totalProjects={
     dashboardData?.stats?.totalProjects || 0
   }
+  loading={loading}
+/>
+
+        <MaintenanceSnapshot
+  stats={dashboardData?.maintenanceStats}
   loading={loading}
 />
 

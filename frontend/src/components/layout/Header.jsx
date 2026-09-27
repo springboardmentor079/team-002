@@ -18,25 +18,8 @@ import {
 import { useNavigate, useLocation } from "react-router-dom";
 import api from "../../services/api";
 import { useCurrentUser, resolveProfileImageUrl } from "../../utils/auth";
+import { buildMenuForRole, getPortalPrefix } from "../../config/roleMenu";
 import ThemeSwitcher from "../common/ThemeSwitcher";
-
-import { adminMenu } from "./Sidebar";
-import { clientMenu } from "./ClientSidebar";
-import { contractorMenu } from "./ContractorSidebar";
-import { projectManagerMenu } from "./ProjectManagerSidebar";
-import { siteEngineerMenu } from "./SiteEngineerSidebar";
-import { workerMenu } from "./WorkerSidebar";
-
-// Existing navigation for each portal — reused for global search so we
-// never invent routes or results.
-const ROLE_NAV = [
-  { prefix: "/admin", menu: adminMenu },
-  { prefix: "/project-manager", menu: projectManagerMenu },
-  { prefix: "/site-engineer", menu: siteEngineerMenu },
-  { prefix: "/contractor", menu: contractorMenu },
-  { prefix: "/client", menu: clientMenu },
-  { prefix: "/worker", menu: workerMenu },
-];
 
 const notificationIcon = (type) => {
   if (type === "success") return CheckCircle2;
@@ -62,10 +45,17 @@ function Header({ title, onToggleSidebar, showTheme = false }) {
   const [notifications, setNotifications] = useState([]);
   const [loadingNotifications, setLoadingNotifications] = useState(false);
 
-  // Active portal navigation (for search + settings/notifications links)
-  const roleNav =
-    ROLE_NAV.find((entry) => location.pathname.startsWith(entry.prefix)) ||
-    ROLE_NAV[0];
+  // Reactive: re-reads the stored user whenever the profile is updated,
+  // so a new name or photo shows up without logging in again.
+  const parsedUser = useCurrentUser();
+
+  // Active portal navigation (for search + settings/notifications links),
+  // taken from the same centralised role configuration the sidebar uses,
+  // so search can only ever suggest pages this role may open.
+  const roleNav = {
+    prefix: getPortalPrefix(parsedUser?.role),
+    menu: buildMenuForRole(parsedUser?.role),
+  };
 
   const navIndex = roleNav.menu.flatMap((group) =>
     group.items.map((item) => ({
@@ -238,10 +228,6 @@ function Header({ title, onToggleSidebar, showTheme = false }) {
   // =========================
   // USER
   // =========================
-  // Reactive: re-reads the stored user whenever the profile is updated,
-  // so a new name or photo shows up without logging in again.
-  const parsedUser = useCurrentUser();
-
   // Determine active route context defaults
   let pageRole = "admin";
   let defaultName = "Admin User";
