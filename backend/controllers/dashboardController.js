@@ -137,9 +137,13 @@ const getSiteEngineerDashboard = async (req, res) => {
       $or: [{ date: /Today/i }, { date: todayKey }],
     });
 
-    const attendance = await Attendance.find().sort({ createdAt: -1 }).limit(6);
+    const wos = await WorkOrder.find({ lead: user.name });
+    const zones = wos.map((w) => w.zone);
+
+    const attendance = await Attendance.find({ site: { $in: zones } }).sort({ createdAt: -1 }).limit(6);
 
     const attendanceToday = await Attendance.countDocuments({
+      site: { $in: zones },
       $or: [{ date: /Today/i }, { date: todayKey }],
     });
 
@@ -295,7 +299,7 @@ const getContractorDashboard = async (req, res) => {
     });
 
     // ---------------- WORKFORCE / ATTENDANCE ----------------
-    const attendance = await Attendance.find().sort({ createdAt: -1 });
+    const attendance = await Attendance.find({ userEmail: user.email }).sort({ createdAt: -1 });
 
     const todayAttendance = attendance.filter(
       (a) => a.date === "Today" || /Today/i.test(a.date || "")

@@ -3,7 +3,30 @@ const Attendance = require("../models/Attendance");
 // GET /api/attendance
 const getAttendance = async (req, res) => {
   try {
-    const records = await Attendance.find().sort({ createdAt: -1 });
+    const userRole = req.user.role;
+    let query = {};
+
+    if (userRole === "worker") {
+      query = {
+        $or: [{ userName: req.user.name }, { userEmail: req.user.email }],
+      };
+    } else if (userRole === "contractor") {
+      // Current schema lacks direct worker-to-contractor associations.
+      // Contractors see attendance they manually created.
+      query = { userEmail: req.user.email };
+    } else if (userRole === "project_manager") {
+      const Project = require("../models/Project");
+      const projects = await Project.find({ manager: req.user.name });
+      const projectNames = projects.map((p) => p.name);
+      query = { site: { $in: projectNames } };
+    } else if (userRole === "site_engineer") {
+      const WorkOrder = require("../models/WorkOrder");
+      const wos = await WorkOrder.find({ lead: req.user.name });
+      const zones = wos.map((w) => w.zone);
+      query = { site: { $in: zones } };
+    }
+
+    const records = await Attendance.find(query).sort({ createdAt: -1 });
     res.status(200).json({
       success: true,
       data: records,
@@ -17,11 +40,12 @@ const getAttendance = async (req, res) => {
 const logAttendance = async (req, res) => {
   try {
     const { userName, role, trade, status, site, shift } = req.body;
+    const isWorker = req.user.role === "worker";
 
     const record = await Attendance.create({
-      userName: userName || req.user.name || "Worker",
+      userName: isWorker ? req.user.name : (userName || req.user.name || "Worker"),
       userEmail: req.user.email || "worker@buildtrack.com",
-      role: role || req.user.role || "worker",
+      role: isWorker ? req.user.role : (role || req.user.role || "worker"),
       trade: trade || "Skilled Masonry",
       date: "Today",
       checkIn: new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" }),
