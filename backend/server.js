@@ -56,6 +56,12 @@ if (!process.env.FRONTEND_URL) {
 connectDB()
   .then(() => {
     seedInitialData();
+    // Initialize scheduled tasks safely after DB is connected
+    try {
+      require("./services/notificationScheduler")();
+    } catch(err) {
+      console.warn("Scheduler could not be started", err);
+    }
   })
   .catch((err) => {
     console.error("Database connection error:", err.message);

@@ -32,6 +32,19 @@ const createWorkOrder = async (req, res) => {
       statusClass: status === "On Schedule" ? "good" : status === "Delayed" ? "danger" : "warning",
     });
 
+    try {
+      const Notification = require("../models/Notification");
+      await Notification.create({
+        title: "New Work Order Assigned",
+        message: `You are assigned as lead for: ${order.title} at ${order.zone}. Deadline: ${order.deadline}`,
+        role: "site_engineer",
+        assignee: order.lead,
+        type: "info"
+      });
+    } catch(err) {
+      console.error("Failed to create WO notification", err);
+    }
+
     res.status(201).json({
       success: true,
       message: "Work order created successfully",

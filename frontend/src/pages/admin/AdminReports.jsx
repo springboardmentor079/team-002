@@ -77,33 +77,13 @@ function AdminReports() {
     doc.save("BuildTrack_Reports_Summary.pdf");
   };
 
-  const generateAutoBudgetReport = async () => {
+  const generateReport = async (endpoint, type) => {
     try {
       setLoading(true);
-      const res = await API.get("/projects");
-      const projects = res.data.data || [];
-      let totalBudget = 0;
-      let totalSpent = 0;
-      projects.forEach(p => {
-        totalBudget += Number(p.budget || 0);
-        totalSpent += Number(p.spent || 0);
-      });
-
-      const summaryText = `System Auto-Generated Budget Report. Total Projects: ${projects.length}. Total Budget: ₹${totalBudget.toLocaleString("en-IN")}. Total Spent: ₹${totalSpent.toLocaleString("en-IN")}. Remaining: ₹${(totalBudget - totalSpent).toLocaleString("en-IN")}.`;
-
-      const reportData = {
-        title: "Auto Budget Summary",
-        type: "Quality",
-        location: "System-wide",
-        summary: summaryText,
-        snagsFound: 0,
-        status: "Approved"
-      };
-
-      await API.post("/reports", reportData);
+      await API.post(`/reports/generate/${endpoint}`);
       fetchReports();
     } catch (err) {
-      alert("Failed to generate auto report");
+      alert(`Failed to generate ${type} report: ` + (err.response?.data?.message || err.message));
     } finally {
       setLoading(false);
     }
@@ -134,21 +114,29 @@ function AdminReports() {
             <Download size={15} /> Export CSV
           </button>
           {isAuthorized && (
-            <button
-              className="date-button"
-              style={{
-                background: "#0f766e",
-                color: "#ffffff",
-                border: "none",
-                fontWeight: 600,
-                display: "flex",
-                alignItems: "center",
-                gap: "6px",
-              }}
-              onClick={generateAutoBudgetReport}
-            >
-              <FilePlus size={16} /> Auto Budget Report
-            </button>
+            <>
+              <button
+                className="date-button"
+                style={{ background: "#475569", color: "#ffffff", border: "none" }}
+                onClick={() => generateReport("workforce", "Workforce")}
+              >
+                Auto: Workforce
+              </button>
+              <button
+                className="date-button"
+                style={{ background: "#2563eb", color: "#ffffff", border: "none" }}
+                onClick={() => generateReport("procurement", "Procurement")}
+              >
+                Auto: Procurement
+              </button>
+              <button
+                className="date-button"
+                style={{ background: "#0f766e", color: "#ffffff", border: "none" }}
+                onClick={() => generateReport("budget", "Budget")}
+              >
+                Auto: Budget
+              </button>
+            </>
           )}
           {isAuthorized && (
             <button
@@ -185,7 +173,7 @@ function AdminReports() {
 
       {/* FILTER TABS */}
       <div style={{ display: "flex", gap: "8px", marginBottom: "16px", flexWrap: "wrap" }}>
-        {["All", "Daily Progress", "Inspection", "Safety & Audit", "Quality"].map((type) => (
+        {["All", "Daily Progress", "Inspection", "Workforce", "Procurement", "Resource", "Budget"].map((type) => (
           <button
             key={type}
             className={`menu-item ${filterType === type ? "active" : ""}`}
