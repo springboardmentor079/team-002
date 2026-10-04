@@ -8,6 +8,7 @@ function AdminProjects() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("All");
+  const [showArchived, setShowArchived] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
 
@@ -21,6 +22,7 @@ function AdminProjects() {
     progress: 0,
     startDate: "",
     endDate: "",
+    archived: false,
   });
 
   const isAuthorized = canEdit("projects");
@@ -28,7 +30,7 @@ function AdminProjects() {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const res = await API.get("/projects");
+      const res = await API.get(showArchived ? "/projects?archived=true" : "/projects");
       if (res.data && res.data.data) {
         setProjects(res.data.data);
       }
@@ -41,7 +43,7 @@ function AdminProjects() {
 
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [showArchived]);
 
   const handleOpenAdd = () => {
     setEditingProject(null);
@@ -159,7 +161,7 @@ function AdminProjects() {
           />
         </div>
 
-        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
           {["All", "On Track", "Delayed", "At Risk", "Completed"].map((status) => (
             <button
               key={status}
@@ -176,6 +178,10 @@ function AdminProjects() {
               {status}
             </button>
           ))}
+          <label style={{ fontSize: "12px", marginLeft: "8px", display: "flex", alignItems: "center", gap: "4px", color: "#64748b" }}>
+            <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} />
+            Show Archived
+          </label>
         </div>
       </div>
 
@@ -334,6 +340,15 @@ function AdminProjects() {
                   />
                 </div>
               </div>
+
+              {formData.status === "Completed" && (
+                <div style={{ marginTop: "4px" }}>
+                  <label style={{ fontSize: "12px", display: "flex", alignItems: "center", gap: "6px", color: "#64748b" }}>
+                    <input type="checkbox" checked={formData.archived} onChange={(e) => setFormData({ ...formData, archived: e.target.checked })} />
+                    Archive this completed project
+                  </label>
+                </div>
+              )}
 
               <div style={{ display: "flex", justifyContent: "flex-end", gap: "8px", marginTop: "12px" }}>
                 <button

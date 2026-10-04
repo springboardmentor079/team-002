@@ -62,6 +62,18 @@ const projectSchema = new mongoose.Schema(
       enum: ["High", "Medium", "Low"],
       default: "Medium",
     },
+    archived: {
+      type: Boolean,
+      default: false,
+    },
+    archivedAt: {
+      type: Date,
+      default: null,
+    },
+    archivedBy: {
+      type: String,
+      default: "",
+    },
   },
   {
     timestamps: true,

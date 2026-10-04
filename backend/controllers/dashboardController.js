@@ -24,10 +24,14 @@ const matchUser = (user, field) => {
   };
 };
 
-// Extract role-relevant notifications (all + current role)
 const getNotificationsForRole = async (user) => {
   const notifications = await Notification.find({
-    $or: [{ role: "all" }, { role: user.role }],
+    $or: [
+      { role: "all" },
+      { role: user.role, assignee: { $in: ["", null] } },
+      { assignee: user.name },
+      { assignee: user.email }
+    ],
   })
     .sort({ createdAt: -1 })
     .limit(6);
@@ -36,7 +40,12 @@ const getNotificationsForRole = async (user) => {
     list: notifications,
     unread: notifications.filter((n) => !n.read).length,
     totalUnread: await Notification.countDocuments({
-      $or: [{ role: "all" }, { role: user.role }],
+      $or: [
+        { role: "all" },
+        { role: user.role, assignee: { $in: ["", null] } },
+        { assignee: user.name },
+        { assignee: user.email }
+      ],
       read: false,
     }),
   };
