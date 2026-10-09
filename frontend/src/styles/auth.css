@@ -82,11 +82,30 @@ body {
   z-index: 2;
 }
 
+/* The brand is a react-router <Link> back to the landing page */
+.brand,
+.mobile-brand {
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.brand:hover .logo,
+.mobile-brand:hover .logo {
+  transform: scale(1.06);
+}
+
+.brand:hover h2,
+.mobile-brand:hover h2 {
+  color: var(--primary);
+}
+
 .brand h2 {
   font-size: 22px;
   font-weight: 700;
   letter-spacing: -0.01em;
   color: #ffffff;
+  transition: var(--transition);
 }
 
 .logo {
@@ -101,6 +120,7 @@ body {
   font-size: 18px;
   color: #090d16;
   box-shadow: 0 10px 25px -5px rgba(16, 185, 129, 0.4);
+  transition: var(--transition);
 }
 
 .auth-content {
@@ -405,6 +425,7 @@ form {
   .mobile-brand h2 {
     font-size: 20px;
     font-weight: 700;
+    transition: var(--transition);
   }
 
   .auth-card {
@@ -453,4 +474,29 @@ form {
   margin-bottom: 18px;
 
   font-size: 13px;
+}
+
+.success-banner,
+.error-banner {
+  border-radius: 8px;
+
+  padding: 10px 12px;
+  margin-top: 18px;
+
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.success-banner {
+  background: #ecfdf5;
+  color: #047857;
+
+  border: 1px solid #a7f3d0;
+}
+
+.error-banner {
+  background: #fef2f2;
+  color: #dc2626;
+
+  border: 1px solid #fecaca;
 }

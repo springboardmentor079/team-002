@@ -16,8 +16,10 @@ const projectRoutes = require("./routes/projectRoutes");
 const materialRequestRoutes = require("./routes/materialRequestRoutes");
 const workOrderRoutes = require("./routes/workOrderRoutes");
 const equipmentRoutes = require("./routes/equipmentRoutes");
+const maintenanceRoutes = require("./routes/maintenanceRoutes");
 const milestoneRoutes = require("./routes/milestoneRoutes");
 const attendanceRoutes = require("./routes/attendanceRoutes");
+const payrollRoutes = require("./routes/payrollRoutes");
 const inventoryRoutes = require("./routes/inventoryRoutes");
 const reportRoutes = require("./routes/reportRoutes");
 const notificationRoutes = require("./routes/notificationRoutes");
@@ -36,10 +38,30 @@ app.use(cors());
 app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
+// Warn early if password reset emails cannot be delivered
+const { isEmailConfigured } = require("./utils/sendEmail");
+if (!isEmailConfigured()) {
+  console.warn(
+    "WARNING: SMTP is not configured. Forgot-password will accept requests but cannot send reset emails. Set SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD in backend/.env"
+  );
+}
+
+if (!process.env.FRONTEND_URL) {
+  console.warn(
+    "WARNING: FRONTEND_URL is not set. Password reset links will fall back to http://localhost:5173"
+  );
+}
+
 // Database
 connectDB()
   .then(() => {
     seedInitialData();
+    // Initialize scheduled tasks safely after DB is connected
+    try {
+      require("./services/notificationScheduler")();
+    } catch(err) {
+      console.warn("Scheduler could not be started", err);
+    }
   })
   .catch((err) => {
     console.error("Database connection error:", err.message);
@@ -70,8 +92,10 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/materials", materialRequestRoutes);
 app.use("/api/work-orders", workOrderRoutes);
 app.use("/api/equipment", equipmentRoutes);
+app.use("/api/maintenance", maintenanceRoutes);
 app.use("/api/milestones", milestoneRoutes);
 app.use("/api/attendance", attendanceRoutes);
+app.use("/api/payroll", payrollRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/reports", reportRoutes);
 app.use("/api/notifications", notificationRoutes);

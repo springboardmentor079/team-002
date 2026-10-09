@@ -18,6 +18,12 @@ const getProjects = async (req, res) => {
       query.manager = req.user.name;
     }
 
+    if (req.query.archived === "true") {
+      query.archived = true;
+    } else {
+      query.archived = { $ne: true };
+    }
+
     const projects = await Project.find(query)
       .sort({ updatedAt: -1 });
 
@@ -142,6 +148,15 @@ const createProject = async (req, res) => {
 const updateProject = async (req, res) => {
   try {
     const oldProject = await Project.findById(req.params.id);
+
+    if (req.body.archived === true) {
+      if (oldProject.status !== "Completed" && req.body.status !== "Completed") {
+        return res.status(400).json({ success: false, message: "Project must be Completed before it can be archived." });
+      }
+      req.body.archivedAt = new Date();
+      req.body.archivedBy = req.user?.name || "System";
+    }
+
     const project = await Project.findByIdAndUpdate(
       req.params.id,
       req.body,
@@ -256,6 +271,8 @@ const getProjectDashboardData = async (req, res) => {
         query.manager = req.user.name;
       }
     }
+
+    query.archived = { $ne: true };
 
     const projects = await Project.find(query)
       .sort({ updatedAt: -1 });

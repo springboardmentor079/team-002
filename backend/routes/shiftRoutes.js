@@ -44,6 +44,20 @@ router.post("/", async (req, res) => {
       supervisor: supervisor || req.user.name || "Site Supervisor",
       zone: zone || "Tower A",
     });
+
+    try {
+      const Notification = require("../models/Notification");
+      await Notification.create({
+        title: "New Shift Assigned",
+        message: `You have been assigned to shift: ${shift.name} at ${shift.zone}. Timing: ${shift.timing}`,
+        role: "worker",
+        assignee: shift.supervisor,
+        type: "info"
+      });
+    } catch(err) {
+      console.error("Failed to create shift notification", err);
+    }
+
     res.status(201).json({ success: true, data: shift });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });

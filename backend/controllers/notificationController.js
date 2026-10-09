@@ -5,7 +5,12 @@ const Notification = require("../models/Notification");
 const buildRoleQuery = (user) => {
   if (!user) return {};
   return {
-    $or: [{ role: "all" }, { role: user.role }],
+    $or: [
+      { role: "all" },
+      { role: user.role, assignee: { $in: ["", null] } },
+      { assignee: user.name },
+      { assignee: user.email }
+    ],
   };
 };
 

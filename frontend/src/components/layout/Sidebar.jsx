@@ -1,115 +1,30 @@
-import {
-  LayoutDashboard,
-  FolderKanban,
-  Map,
-  HardHat,
-  Package,
-  Users,
-  ShoppingCart,
-  FileBarChart,
-  ChartNoAxesCombined,
-  Bell,
-  Settings,
-  Files,
-} from "lucide-react";
+import { HardHat } from "lucide-react";
 
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
-const menuItems = [
-  {
-    section: "MAIN",
-    items: [
-      {
-        name: "Dashboard",
-        icon: LayoutDashboard,
-        path: "/admin/dashboard",
-      },
-      {
-        name: "Projects",
-        icon: FolderKanban,
-        path: "/admin/projects",
-      },
-      {
-        name: "Site Progress",
-        icon: Map,
-        path: "/admin/site-progress",
-      },
-    ],
-  },
+import { buildMenuForRole } from "../../config/roleMenu";
+import { useCurrentUser } from "../../utils/auth";
 
-  {
-    section: "MANAGEMENT",
-    items: [
-      {
-        name: "Resources",
-        icon: HardHat,
-        path: "/admin/resources",
-      },
-      {
-        name: "Inventory",
-        icon: Package,
-        path: "/admin/inventory",
-      },
-      {
-        name: "Workforce",
-        icon: Users,
-        path: "/admin/workforce",
-      },
-      {
-        name: "Procurement",
-        icon: ShoppingCart,
-        path: "/admin/procurement",
-      },
-      {
-        name: "Documents",
-        icon: Files,
-        path: "/admin/documents",
-      },
-    ],
-  },
-
-  {
-    section: "INSIGHTS",
-    items: [
-      {
-        name: "Reports",
-        icon: FileBarChart,
-        path: "/admin/reports",
-      },
-      {
-        name: "Analytics",
-        icon: ChartNoAxesCombined,
-        path: "/admin/analytics",
-      },
-      {
-        name: "Notifications",
-        icon: Bell,
-        path: "/admin/notifications",
-      },
-    ],
-  },
-
-  {
-    section: "SYSTEM",
-    items: [
-      {
-        name: "Settings",
-        icon: Settings,
-        path: "/admin/settings",
-      },
-    ],
-  },
-];
-
-function Sidebar({
-  collapsed = false,
-  drawerOpen = false,
-  onClose = () => {},
-  menu = menuItems,
-}) {
+// ONE sidebar for every role.
+//
+// The items are not hard-coded here: they are looked up from the
+// signed-in user's real role in config/roleMenu.js, which is also what
+// refreshes the menu on logout/login without a page reload.
+//
+// Everything that draws the menu - the logo block, the section markup,
+// the item markup, the class names, the collapsed/drawer behaviour, the
+// Escape key and the body scroll lock - is exactly as it was.
+function Sidebar({ collapsed = false, drawerOpen = false, onClose = () => {} }) {
   const navigate = useNavigate();
   const location = useLocation();
+
+  // The authenticated user record (id, name, role, profile photo, ...).
+  // Kept in sync by UserProfileSync and by any profile update.
+  const currentUser = useCurrentUser();
+
+  // currentUser.role -> role menu configuration -> allowed items only.
+  const menu = buildMenuForRole(currentUser?.role);
 
   // Close the mobile drawer with Escape.
   useEffect(() => {
@@ -205,8 +120,5 @@ function Sidebar({
     </>
   );
 }
-
-/* eslint-disable-next-line react-refresh/only-export-components */
-export { menuItems as adminMenu };
 
 export default Sidebar;

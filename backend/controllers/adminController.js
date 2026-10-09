@@ -3,6 +3,7 @@ const Project = require("../models/Project");
 const MaterialRequest = require("../models/MaterialRequest");
 const Notification = require("../models/Notification");
 const Milestone = require("../models/Milestone");
+const Maintenance = require("../models/Maintenance");
 
 
 // ================= ADMIN DASHBOARD =================
@@ -79,6 +80,14 @@ const getDashboardData = async (req, res) => {
       await MaterialRequest.countDocuments({
         status: "Pending Approval",
       });
+
+    // ==========================================
+    // MAINTENANCE
+    // ==========================================
+
+    // Live counts from the maintenance collection
+    const maintenanceStats =
+      await Maintenance.getSummary();
 
     // ==========================================
     // SYSTEM ALERTS
@@ -192,6 +201,7 @@ const getDashboardData = async (req, res) => {
       recentUsers,
       recentActivities,
       analyticsData,
+      maintenanceStats,
 
       admin: {
         name: req.user.name,

@@ -1,0 +1,414 @@
+/* ============================================================
+   Profile Management
+   Reuses the existing dashboard card language and theme tokens so
+   it blends into every role dashboard without changing the theme.
+   ============================================================ */
+
+.profile-card {
+  margin-bottom: 20px;
+}
+
+/* ============================================================
+   CARD LAYOUT
+   Two cards per row on desktop and tablet, one per row on mobile.
+   minmax(0, 1fr) lets the columns shrink with the viewport so the
+   grid never forces horizontal scrolling, and the default stretch
+   keeps the cards in a row the same height.
+   ============================================================ */
+
+.profile-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  align-items: start;
+  width: 100%;
+}
+
+/* The shared .dashboard-card min-height (370px) exists for the tall stat and
+   analytics cards; profile cards size to their own content. Compound
+   specificity is used because profile.css and dashboard.css load in a
+   nondeterministic order. align-items: start above stops the shorter Change
+   Password card from stretching to the height of the taller My Profile card
+   and leaving a gap under its button. */
+.dashboard-card.profile-card {
+  min-height: 0;
+}
+
+.profile-layout > .profile-card {
+  margin-bottom: 0;
+}
+
+/* Each card is roughly half the page width once the grid is two columns, so
+   the inner detail/form grids follow the card's own width instead of the
+   viewport, and never squeeze the inputs. */
+.profile-card {
+  container-type: inline-size;
+}
+
+@container (max-width: 480px) {
+  .profile-details,
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Only split into two columns once the dashboard has room for two full
+   cards beside the sidebar. */
+@media (min-width: 1100px) {
+  .profile-layout {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Keeps the theme card beside it at its original comfortable width when the
+   settings page column is widened for the two-column profile grid. */
+.profile-side-card {
+  max-width: 560px;
+  width: 100%;
+}
+
+/* ---------- loading / alerts ---------- */
+
+.profile-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 32px 16px;
+  font-size: 13px;
+  color: var(--theme-text-secondary, #64748b);
+}
+
+.profile-spinner {
+  animation: profile-spin 0.9s linear infinite;
+}
+
+@keyframes profile-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.profile-alert {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.profile-alert.success {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #047857;
+}
+
+.profile-alert.error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+}
+
+/* ---------- identity block ---------- */
+
+.profile-identity {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 0 4px;
+}
+
+.profile-avatar-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.profile-avatar-img,
+.profile-avatar-fallback {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #090d16;
+  background: linear-gradient(135deg, #34d399, #10b981);
+  box-shadow: 0 10px 25px -8px rgba(16, 185, 129, 0.5);
+  border: 3px solid var(--theme-bg-card, #ffffff);
+}
+
+.profile-avatar-btn {
+  position: absolute;
+  right: -2px;
+  bottom: -2px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid var(--theme-bg-card, #ffffff);
+  background: var(--theme-accent, #d97706);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: var(--theme-transition, all 0.2s ease);
+}
+
+.profile-avatar-btn:hover:not(:disabled) {
+  filter: brightness(1.08);
+  transform: scale(1.06);
+}
+
+.profile-avatar-btn:disabled {
+  opacity: 0.7;
+  cursor: wait;
+}
+
+.profile-identity-text {
+  min-width: 0;
+}
+
+.profile-identity-text h4 {
+  margin: 0 0 2px;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--theme-text-primary, #374151);
+  word-break: break-word;
+}
+
+.profile-identity-text p {
+  margin: 0 0 8px;
+  font-size: 12px;
+  color: var(--theme-text-secondary, #64748b);
+}
+
+.profile-photo-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.profile-link-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--theme-accent, #d97706);
+  cursor: pointer;
+  text-decoration: underline;
+  transition: opacity 0.2s ease;
+}
+
+.profile-link-btn:hover:not(:disabled) {
+  opacity: 0.75;
+}
+
+.profile-link-btn:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+.profile-link-btn.danger {
+  color: #dc2626;
+}
+
+/* ---------- read-only detail grid ---------- */
+
+.profile-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--theme-border-light, #eeeeee);
+}
+
+.profile-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.profile-detail > span {
+  font-size: 11px;
+  color: var(--theme-text-muted, #9ca3af);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.profile-detail > strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--theme-text-primary, #374151);
+  word-break: break-word;
+}
+
+.profile-detail > small {
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--theme-text-muted, #9ca3af);
+}
+
+/* ---------- forms ---------- */
+
+.profile-form {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--theme-border-light, #eeeeee);
+}
+
+.profile-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.profile-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.profile-field label {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--theme-text-secondary, #64748b);
+}
+
+.profile-field input {
+  width: 100%;
+  padding: 9px 12px;
+  font-size: 12px;
+  font-family: inherit;
+  color: var(--theme-text-primary, #374151);
+  background: var(--theme-input-bg, #f8fafc);
+  border: 1px solid var(--theme-input-border, #e2e8f0);
+  border-radius: 6px;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.profile-field input:focus {
+  border-color: var(--theme-accent, #d97706);
+  box-shadow: 0 0 0 3px var(--theme-accent-soft, #fff3d6);
+}
+
+.profile-field input:disabled,
+.profile-field input[readonly] {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.profile-field-error {
+  font-size: 11px;
+  color: #dc2626;
+}
+
+.profile-field-hint {
+  font-size: 11px;
+  color: var(--theme-text-muted, #9ca3af);
+}
+
+.profile-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+/* ---------- buttons (match existing date-button feel) ---------- */
+
+.profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  color: #ffffff;
+  background: var(--theme-accent, #d97706);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+
+.profile-btn:hover:not(:disabled) {
+  filter: brightness(1.08);
+}
+
+.profile-btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.profile-btn.ghost {
+  background: transparent;
+  color: var(--theme-text-secondary, #64748b);
+  border: 1px solid var(--theme-border, #e5e7eb);
+}
+
+.profile-btn.ghost:hover:not(:disabled) {
+  background: var(--theme-bg-hover, #f3f4f6);
+}
+
+.profile-btn.danger {
+  background: #dc2626;
+}
+
+/* The header/dropdown variant of .profile-avatar-img lives in dashboard.css
+   so it loads on every dashboard, not only the settings page. */
+/* ---------- responsive ---------- */
+
+@media (max-width: 900px) {
+  .profile-details,
+  .profile-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 560px) {
+  .profile-identity {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .profile-form-actions {
+    flex-direction: column-reverse;
+  }
+
+  .profile-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+/* ---------- dark / themed surfaces ---------- */
+
+[data-theme]:not([data-theme="light"]) .profile-detail > strong,
+[data-theme]:not([data-theme="light"]) .profile-identity-text h4 {
+  color: var(--theme-text-primary, #e5e7eb);
+}
+
+[data-theme]:not([data-theme="light"]) .profile-field input {
+  background: var(--theme-input-bg, #1f2937);
+  border-color: var(--theme-input-border, #374151);
+  color: var(--theme-text-primary, #e5e7eb);
+}
+
+[data-theme]:not([data-theme="light"]) .profile-btn.ghost {
+  color: var(--theme-text-secondary, #9ca3af);
+  border-color: var(--theme-border, #374151);
+}
