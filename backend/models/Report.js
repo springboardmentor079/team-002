@@ -8,7 +8,7 @@ const reportSchema = new mongoose.Schema(
     },
     type: {
       type: String,
-      enum: ["Daily Progress", "Inspection", "Safety & Audit", "Financial", "Quality"],
+      enum: ["Daily Progress", "Inspection", "Safety & Audit", "Financial", "Quality", "Workforce", "Procurement", "Resource", "Budget"],
       default: "Daily Progress",
     },
     author: {

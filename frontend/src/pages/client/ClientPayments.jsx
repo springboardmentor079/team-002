@@ -1,4 +1,5 @@
 import { Receipt, Download, CheckCircle2, Clock } from "lucide-react";
+import { jsPDF } from "jspdf";
 import ClientFinancialOverview from "../../components/client/ClientFinancialOverview";
 import StatCard from "../../components/dashboard/StatCard";
 
@@ -6,7 +7,27 @@ function ClientPayments() {
   const invoices = [];
 
   const handleDownloadInvoice = (inv) => {
-    alert(`Downloading verified receipt for ${inv.id} (${inv.amount})`);
+    try {
+      const doc = new jsPDF();
+      doc.setFillColor(30, 41, 59);
+      doc.rect(0, 0, 210, 24, "F");
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text("BuildTrack - Milestone Invoice Receipt", 14, 15);
+
+      doc.setTextColor(30, 41, 59);
+      doc.setFontSize(12);
+      doc.text(`Invoice ID: ${inv.id}`, 14, 38);
+      doc.text(`Milestone: ${inv.milestone}`, 14, 46);
+      doc.text(`Amount: ${inv.amount}`, 14, 54);
+      doc.text(`Status: ${inv.status}`, 14, 62);
+      doc.text(`Issued Date: ${new Date().toLocaleDateString()}`, 14, 70);
+
+      doc.save(`Invoice_${inv.id}.pdf`);
+    } catch (err) {
+      alert("Failed to generate invoice PDF: " + err.message);
+    }
   };
 
   return (

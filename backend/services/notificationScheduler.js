@@ -58,10 +58,10 @@ const checkDeadlineNotifications = async () => {
       const endDate = new Date(project.endDate);
       if (isNaN(endDate)) continue; // ignore non-standard date strings
 
-      const diffTime = Math.abs(endDate - today);
+      const diffTime = endDate - today;
       const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-      if (diffDays <= 3) {
+      if (diffDays >= 0 && diffDays <= 3) {
         const exist = await Notification.findOne({
           title: "Deadline Approaching",
           message: new RegExp(project.name),

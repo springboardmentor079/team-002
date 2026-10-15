@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { FileBarChart, Plus, Download, FileText, CheckCircle2, AlertCircle, FilePlus } from "lucide-react";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
+import { FileBarChart, Plus, Download, FileText, CheckCircle2, AlertCircle, FilePlus, Loader2 } from "lucide-react";
+import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 import API from "../../services/api";
 import { canEdit } from "../../utils/auth";
 import StatCard from "../../components/dashboard/StatCard";
@@ -11,6 +11,9 @@ function AdminReports() {
   const [loading, setLoading] = useState(true);
   const [filterType, setFilterType] = useState("All");
   const [showModal, setShowModal] = useState(false);
+  const [isExportingPdf, setIsExportingPdf] = useState(false);
+  const [isExportingCsv, setIsExportingCsv] = useState(false);
+  const [generatingType, setGeneratingType] = useState(null);
   const [formData, setFormData] = useState({
     title: "",
     type: "Daily Progress",
@@ -52,40 +55,162 @@ function AdminReports() {
   };
 
   const handleExport = () => {
-    const csvContent =
-      "data:text/csv;charset=utf-8," +
-      ["Title,Type,Author,Date,Location,Status", ...reports.map((r) => `"${r.title}","${r.type}","${r.author}","${r.date}","${r.location}","${r.status}"`)].join("\n");
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "BuildTrack_Reports_Summary.csv");
-    document.body.appendChild(link);
-    link.click();
-    link.click();
-    document.body.removeChild(link);
+    if (isExportingCsv) return;
+    try {
+      setIsExportingCsv(true);
+      const dataToExport = filterType === "All" ? reports : reports.filter((r) => r.type === filterType);
+      const csvRows = [
+        ["Title", "Type", "Author", "Date", "Location", "Summary", "Status"].join(","),
+        ...dataToExport.map((r) =>
+          [
+            `"${(r.title || "").replace(/"/g, '""')}"`,
+            `"${(r.type || "").replace(/"/g, '""')}"`,
+            `"${(r.author || "").replace(/"/g, '""')}"`,
+            `"${(r.date || (r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "")).replace(/"/g, '""')}"`,
+            `"${(r.location || "").replace(/"/g, '""')}"`,
+            `"${(r.summary || "").replace(/"/g, '""')}"`,
+            `"${(r.status || "").replace(/"/g, '""')}"`,
+          ].join(",")
+        ),
+      ];
+      const blob = new Blob([csvRows.join("\n")], { type: "text/csv;charset=utf-8;" });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      const cleanFilter = filterType.replace(/[^a-zA-Z0-9]/g, "_");
+      link.setAttribute("download", `BuildTrack_${cleanFilter}_Reports_Summary.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("CSV Export error:", err);
+      alert("Failed to export CSV: " + err.message);
+    } finally {
+      setIsExportingCsv(false);
+    }
   };
 
   const handleExportPDF = () => {
-    const doc = new jsPDF();
-    doc.text("BuildTrack Reports Summary", 14, 15);
-    const tableData = reports.map((r) => [r.title, r.type, r.author, r.date || new Date(r.createdAt).toLocaleDateString(), r.location, r.status]);
-    doc.autoTable({
-      head: [["Title", "Type", "Author", "Date", "Location", "Status"]],
-      body: tableData,
-      startY: 20,
-    });
-    doc.save("BuildTrack_Reports_Summary.pdf");
+    if (isExportingPdf) return;
+    try {
+      setIsExportingPdf(true);
+      const dataToExport = filterType === "All" ? reports : reports.filter((r) => r.type === filterType);
+
+      const doc = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+      });
+
+      // Header Banner
+      doc.setFillColor(30, 41, 59);
+      doc.rect(0, 0, 297, 24, "F");
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(16);
+      doc.text("BuildTrack - Construction Project Management", 14, 11);
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10);
+      doc.setTextColor(203, 213, 225);
+      doc.text(`Official Executive & Site Reports | Category: ${filterType}`, 14, 18);
+
+      // Metadata section
+      doc.setTextColor(71, 85, 105);
+      doc.setFontSize(9);
+      const exportDate = new Date().toLocaleString("en-IN", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      doc.text(`Generated on: ${exportDate}  |  Total Records: ${dataToExport.length}`, 14, 31);
+
+      if (dataToExport.length === 0) {
+        doc.setFontSize(11);
+        doc.setTextColor(100, 116, 139);
+        doc.text(`No report entries available for category: "${filterType}".`, 14, 45);
+        autoTable(doc, {
+          startY: 50,
+          head: [["Status", "Notice"]],
+          body: [["Empty", `No report records found matching filter "${filterType}".`]],
+          theme: "grid",
+          headStyles: { fillColor: [71, 85, 105], textColor: [255, 255, 255] },
+        });
+      } else {
+        const tableData = dataToExport.map((r, idx) => [
+          String(idx + 1),
+          r.title || "Untitled Report",
+          r.type || "Daily Progress",
+          r.author || "Site Engineer",
+          r.date || (r.createdAt ? new Date(r.createdAt).toLocaleDateString() : "N/A"),
+          r.location || "System-wide",
+          r.summary || "No additional notes provided.",
+          r.status || "Approved",
+        ]);
+
+        autoTable(doc, {
+          startY: 36,
+          head: [["#", "Title", "Type", "Author", "Date", "Location", "Summary / Metrics", "Status"]],
+          body: tableData,
+          theme: "striped",
+          headStyles: {
+            fillColor: [30, 41, 59],
+            textColor: [255, 255, 255],
+            fontStyle: "bold",
+            fontSize: 9,
+          },
+          bodyStyles: {
+            fontSize: 8,
+            cellPadding: 3,
+            textColor: [30, 41, 59],
+          },
+          columnStyles: {
+            0: { cellWidth: 10, halign: "center" },
+            1: { cellWidth: 45, fontStyle: "bold" },
+            2: { cellWidth: 26 },
+            3: { cellWidth: 26 },
+            4: { cellWidth: 24 },
+            5: { cellWidth: 32 },
+            6: { cellWidth: 84 },
+            7: { cellWidth: 22, halign: "center" },
+          },
+          didDrawPage: (data) => {
+            const pageCount = doc.internal.getNumberOfPages();
+            doc.setFontSize(8);
+            doc.setTextColor(148, 163, 184);
+            doc.text(
+              `Page ${data.pageNumber} of ${pageCount} - Confidential BuildTrack Internal Audit Document`,
+              14,
+              205
+            );
+          },
+        });
+      }
+
+      const cleanFilter = filterType.replace(/[^a-zA-Z0-9]/g, "_");
+      doc.save(`BuildTrack_${cleanFilter}_Reports_Summary.pdf`);
+    } catch (err) {
+      console.error("PDF Export error:", err);
+      alert("Failed to export PDF: " + (err.message || "Unknown error"));
+    } finally {
+      setIsExportingPdf(false);
+    }
   };
 
   const generateReport = async (endpoint, type) => {
+    if (generatingType) return;
     try {
-      setLoading(true);
+      setGeneratingType(type);
       await API.post(`/reports/generate/${endpoint}`);
       fetchReports();
     } catch (err) {
       alert(`Failed to generate ${type} report: ` + (err.response?.data?.message || err.message));
     } finally {
-      setLoading(false);
+      setGeneratingType(null);
     }
   };
 
@@ -98,20 +223,22 @@ function AdminReports() {
           <h1>Site & Executive Reports 📊</h1>
           <p>Quality inspections, structural compliance sign-offs, daily workforce counts, and audit logs.</p>
         </div>
-        <div style={{ display: "flex", gap: "8px" }}>
+        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
           <button
             className="date-button"
-            style={{ display: "flex", alignItems: "center", gap: "6px" }}
+            style={{ display: "flex", alignItems: "center", gap: "6px", cursor: isExportingPdf ? "not-allowed" : "pointer" }}
             onClick={handleExportPDF}
+            disabled={isExportingPdf}
           >
-            <FileText size={15} /> Export PDF
+            <FileText size={15} /> {isExportingPdf ? "Exporting PDF..." : "Export PDF"}
           </button>
           <button
             className="date-button"
-            style={{ display: "flex", alignItems: "center", gap: "6px" }}
+            style={{ display: "flex", alignItems: "center", gap: "6px", cursor: isExportingCsv ? "not-allowed" : "pointer" }}
             onClick={handleExport}
+            disabled={isExportingCsv}
           >
-            <Download size={15} /> Export CSV
+            <Download size={15} /> {isExportingCsv ? "Exporting CSV..." : "Export CSV"}
           </button>
           {isAuthorized && (
             <>
@@ -119,22 +246,33 @@ function AdminReports() {
                 className="date-button"
                 style={{ background: "#475569", color: "#ffffff", border: "none" }}
                 onClick={() => generateReport("workforce", "Workforce")}
+                disabled={generatingType !== null}
               >
-                Auto: Workforce
+                {generatingType === "Workforce" ? "Generating..." : "Auto: Workforce"}
               </button>
               <button
                 className="date-button"
                 style={{ background: "#2563eb", color: "#ffffff", border: "none" }}
                 onClick={() => generateReport("procurement", "Procurement")}
+                disabled={generatingType !== null}
               >
-                Auto: Procurement
+                {generatingType === "Procurement" ? "Generating..." : "Auto: Procurement"}
+              </button>
+              <button
+                className="date-button"
+                style={{ background: "#0284c7", color: "#ffffff", border: "none" }}
+                onClick={() => generateReport("resource", "Resource")}
+                disabled={generatingType !== null}
+              >
+                {generatingType === "Resource" ? "Generating..." : "Auto: Resource"}
               </button>
               <button
                 className="date-button"
                 style={{ background: "#0f766e", color: "#ffffff", border: "none" }}
                 onClick={() => generateReport("budget", "Budget")}
+                disabled={generatingType !== null}
               >
-                Auto: Budget
+                {generatingType === "Budget" ? "Generating..." : "Auto: Budget"}
               </button>
             </>
           )}
@@ -247,6 +385,10 @@ function AdminReports() {
                 >
                   <option value="Daily Progress">Daily Progress</option>
                   <option value="Inspection">Inspection</option>
+                  <option value="Workforce">Workforce</option>
+                  <option value="Procurement">Procurement</option>
+                  <option value="Resource">Resource</option>
+                  <option value="Budget">Budget</option>
                   <option value="Safety & Audit">Safety & Audit</option>
                   <option value="Quality">Quality</option>
                 </select>

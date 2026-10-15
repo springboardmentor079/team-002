@@ -73,7 +73,7 @@ const punchClock = async (req, res) => {
 
     // Look for today's record for this user
     let record = await Attendance.findOne({
-      userName: req.user.name,
+      $or: [{ userEmail: req.user.email }, { userName: req.user.name }],
       date: "Today",
     });
 

@@ -8,6 +8,7 @@ function WorkerAttendance() {
   const [punchTime, setPunchTime] = useState("--");
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isPunching, setIsPunching] = useState(false);
 
   useEffect(() => {
     const fetchAttendance = async () => {
@@ -39,7 +40,9 @@ function WorkerAttendance() {
   }, []);
 
   const togglePunch = async () => {
+    if (isPunching) return;
     try {
+      setIsPunching(true);
       const action = punchedIn ? "out" : "in";
       const res = await API.post("/attendance/punch", { action });
       const now = new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
@@ -51,7 +54,7 @@ function WorkerAttendance() {
             idx === 0 ? { ...h, out: now, hours: "Completed", status: "Present" } : h
           ),
         ]);
-        alert(`Punched OUT successfully at ${now}`);
+        alert(res.data?.message || `Punched OUT successfully at ${now}`);
       } else {
         setPunchedIn(true);
         setPunchTime(now);
@@ -59,18 +62,13 @@ function WorkerAttendance() {
           { date: "Today", in: now, out: "--", hours: "Ongoing", status: "Active" },
           ...prev,
         ]);
-        alert(`Punched IN successfully at ${now}`);
+        alert(res.data?.message || `Punched IN successfully at ${now}`);
       }
-    } catch {
-      const now = new Date().toLocaleTimeString("en-IN", { hour: "2-digit", minute: "2-digit" });
-      if (punchedIn) {
-        setPunchedIn(false);
-        alert(`Punched OUT at ${now}`);
-      } else {
-        setPunchedIn(true);
-        setPunchTime(now);
-        alert(`Punched IN at ${now}`);
-      }
+    } catch (err) {
+      console.error("Punch error:", err);
+      alert(err.response?.data?.message || "Failed to record attendance. Please try again.");
+    } finally {
+      setIsPunching(false);
     }
   };
 
@@ -137,8 +135,11 @@ function WorkerAttendance() {
               alignItems: "center",
               gap: "8px",
               borderRadius: "9999px",
+              cursor: isPunching ? "not-allowed" : "pointer",
+              opacity: isPunching ? 0.7 : 1,
             }}
             onClick={togglePunch}
+            disabled={isPunching}
           >
             {punchedIn ? (
               <>

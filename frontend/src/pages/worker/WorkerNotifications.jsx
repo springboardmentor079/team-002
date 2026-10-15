@@ -37,6 +37,16 @@ function WorkerNotifications() {
     }
   };
 
+  const handleMarkOne = async (id) => {
+    try {
+      await API.put(`/notifications/${id}/read`);
+      fetchNotifications();
+    } catch (err) {
+      console.error(err);
+      setNotifications((prev) => prev.map((n) => (n._id === id ? { ...n, read: true } : n)));
+    }
+  };
+
   return (
     <>
       <div className="welcome-section" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -76,6 +86,7 @@ function WorkerNotifications() {
                 return (
                   <div
                     key={n._id}
+                    onClick={() => !n.read && handleMarkOne(n._id)}
                     style={{
                       display: "flex",
                       alignItems: "flex-start",
@@ -84,6 +95,7 @@ function WorkerNotifications() {
                       borderRadius: "8px",
                       background: n.read ? "#f8fafc" : "#eff6ff",
                       border: n.read ? "1px solid #f1f5f9" : "1px solid #bfdbfe",
+                      cursor: n.read ? "default" : "pointer",
                     }}
                   >
                     <div className={`activity-icon ${n.type === "warning" ? "role" : "project"}`}>

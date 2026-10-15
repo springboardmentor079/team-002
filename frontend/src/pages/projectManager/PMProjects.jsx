@@ -9,6 +9,7 @@ function PMProjects() {
   const [search, setSearch] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
+  const [showArchived, setShowArchived] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     client: "",
@@ -17,6 +18,7 @@ function PMProjects() {
     status: "On Track",
     progress: 0,
     endDate: "",
+    archived: false,
   });
 
   const isAuthorized = canEdit("projects");
@@ -24,7 +26,7 @@ function PMProjects() {
   const fetchProjects = async () => {
     try {
       setLoading(true);
-      const res = await API.get("/projects");
+      const res = await API.get(showArchived ? "/projects?archived=true" : "/projects");
       if (res.data && res.data.data) {
         setProjects(res.data.data);
       }
@@ -37,7 +39,7 @@ function PMProjects() {
 
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [showArchived]);
 
   const handleOpenAdd = () => {
     setEditingProject(null);
@@ -49,6 +51,7 @@ function PMProjects() {
       status: "On Track",
       progress: 0,
       endDate: "",
+      archived: false,
     });
     setShowModal(true);
   };
@@ -63,6 +66,7 @@ function PMProjects() {
       status: p.status || "On Track",
       progress: p.progress || 0,
       endDate: p.endDate || "",
+      archived: p.archived || false,
     });
     setShowModal(true);
   };
@@ -146,7 +150,7 @@ function PMProjects() {
         )}
       </div>
 
-      <div className="dashboard-card" style={{ marginBottom: "20px", display: "flex", gap: "10px", alignItems: "center" }}>
+      <div className="dashboard-card" style={{ marginBottom: "20px", display: "flex", gap: "10px", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap" }}>
         <div className="pm-search-box" style={{ width: "300px" }}>
           <Search size={16} />
           <input
@@ -156,6 +160,10 @@ function PMProjects() {
             onChange={(e) => setSearch(e.target.value)}
           />
         </div>
+        <label style={{ fontSize: "12px", display: "flex", alignItems: "center", gap: "6px", color: "#64748b", cursor: "pointer" }}>
+          <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} />
+          Show Archived
+        </label>
       </div>
 
       {loading ? (
@@ -350,6 +358,18 @@ function PMProjects() {
                       <option value="Completed">Completed</option>
                     </select>
                   </div>
+                  {formData.status === "Completed" && (
+                    <div style={{ marginTop: "6px" }}>
+                      <label style={{ fontSize: "12px", display: "flex", alignItems: "center", gap: "6px", color: "#64748b", cursor: "pointer" }}>
+                        <input
+                          type="checkbox"
+                          checked={formData.archived || false}
+                          onChange={(e) => setFormData({ ...formData, archived: e.target.checked })}
+                        />
+                        Archive this completed project
+                      </label>
+                    </div>
+                  )}
                 </>
               )}
 
