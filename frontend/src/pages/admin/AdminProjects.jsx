@@ -45,6 +45,12 @@ function AdminProjects() {
     fetchProjects();
   }, [showArchived]);
 
+  useEffect(() => {
+    if (new URLSearchParams(window.location.search).get("new") === "true") {
+      handleOpenAdd();
+    }
+  }, []);
+
   const handleOpenAdd = () => {
     setEditingProject(null);
     setFormData({
@@ -71,6 +77,7 @@ function AdminProjects() {
       progress: proj.progress,
       startDate: proj.startDate,
       endDate: proj.endDate,
+      archived: proj.archived || false,
     });
     setShowModal(true);
   };

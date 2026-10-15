@@ -71,8 +71,9 @@ function AdminDocuments() {
   };
 
   const getFileUrl = (url) => {
+    if (!url) return "#";
     if (url.startsWith("http")) return url;
-    return `http://localhost:5001${url}`;
+    return url.startsWith("/") ? url : `/${url}`;
   };
 
   return (

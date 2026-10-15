@@ -30,6 +30,17 @@ function ContractorNotifications() {
       fetchNotifications();
     } catch (err) {
       console.error(err);
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+    }
+  };
+
+  const handleMarkOne = async (id) => {
+    try {
+      await API.put(`/notifications/${id}/read`);
+      fetchNotifications();
+    } catch (err) {
+      console.error(err);
+      setNotifications((prev) => prev.map((n) => (n._id === id ? { ...n, read: true } : n)));
     }
   };
 
@@ -70,6 +81,7 @@ function ContractorNotifications() {
                 return (
                   <div
                     key={n._id}
+                    onClick={() => !n.read && handleMarkOne(n._id)}
                     style={{
                       display: "flex",
                       alignItems: "flex-start",
@@ -78,6 +90,7 @@ function ContractorNotifications() {
                       borderRadius: "8px",
                       background: n.read ? "#f8fafc" : "#fffbeb",
                       border: n.read ? "1px solid #f1f5f9" : "1px solid #fde68a",
+                      cursor: n.read ? "default" : "pointer",
                     }}
                   >
                     <div className={`activity-icon ${n.type === "warning" ? "role" : "project"}`}>
